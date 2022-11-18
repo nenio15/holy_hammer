@@ -10,19 +10,20 @@ from Character import Character
 from Joystick import Joystick
 
 def main():
+    space = 10
     joystick = Joystick()
-    my_image = Image.new("RGBA", (joystick.width, joystick.height))
-    my_img = Image.open("32_char.png").convert("RGBA")
+    my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
+    my_img = Image.open("64_char.png")
     background = Image.open("background1.png")
     # my_img = img.resize((32, 32))
     my_draw = ImageDraw.Draw(my_image)
     # 배경화면 초기화?
-    my_draw.rectangle((0, 0, joystick.width, joystick.height), fill=(255, 0, 0, 100))
-    joystick.disp.image(my_image)
+    my_draw.rectangle((space, space, joystick.width + space, joystick.height + space), fill=(255, 0, 0, 100))
+    joystick.disp.image(my_image, 180, space, space)
     # 캐릭터 위치, 배경화면 초기화
     my_character = Character(joystick.width, joystick.height)
     # my_draw.rectangle((0, 0, joystick.width, joystick.height), fill = (255, 255, 255, 100))
-    my_image.paste(background, (0, 0))
+    my_image.paste(background, (space, space))
     while True:
         command = None
         if not joystick.button_U.value:  # up pressed
@@ -47,11 +48,13 @@ def main():
         # my_draw.ellipse(tuple(my_circle.position), outline = my_circle.outline, fill = (0, 0, 0))
         # my_image.paste(my_img, (0, 0))
 
-        my_image.paste(background, (0, 0))
-        my_image.paste(my_img, tuple(my_character.position))
+        my_image.paste(background, (space, space))
+        # my_image.paste(my_img, tuple(my_character.position))
+        # 얘는 음수로 가면 오류나네요, 막기는 쉬운데.. 약간은 캐릭터가 들어가도록 하고 싶은데...
+        my_image.alpha_composite(my_img, tuple(my_character.position))
         
     #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
-        joystick.disp.image(my_image)
+        joystick.disp.image(my_image, 180, space, space)
 
 
 if __name__ == '__main__':

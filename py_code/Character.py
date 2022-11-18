@@ -5,7 +5,7 @@ class Character:
         self.appearance = 'circle'
         self.state = None
         # self.position = np.array([width/2 - 20, height/2 - 20, width/2 + 20, height/2 + 20])
-        self.position = np.array([(int)(width/2 - 20), (int)(height/2 - 20)])
+        self.position = np.array([(int)(width/2 - 32), (int)(height/2 - 32)])
         self.outline = "#FFFFFF"
         # self.x = (int)(width/2 - 20)
         # self.y = (int)(height/2 - 20)
