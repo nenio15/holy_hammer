@@ -30,6 +30,7 @@ def main():
 
     while True:
         command = {'move': False, 'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
+        # this can move to other def?
         if not joystick.button_U.value:  # up pressed
             command['up_pressed'] = True
             command['move'] = True
@@ -50,6 +51,11 @@ def main():
             print("A_pressed")
 
         my_character.move(command)
+        for enemy in enemy_list:
+            if enemy.state != 'die':
+                enemy.move(my_character.center)
+                my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
+
 
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
 
@@ -58,10 +64,7 @@ def main():
         # my_image.alpha_composite(my_img, tuple(my_character.position))
         my_image.paste(my_img, tuple(my_character.position), my_img)
         
-        for enemy in enemy_list:
-            if enemy.state != 'die':
-                my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
-
+        
         
     #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
         joystick.disp.image(my_image, 180, space, space)
