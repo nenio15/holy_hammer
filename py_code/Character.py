@@ -49,9 +49,12 @@ class Character:
             #self.appearance = '../res/char_attack_up.png'
             print('up action')
         elif self.direction == 'down':
+            #self.appearance = '../res/char_attack_down.png'
             print('down action')
         elif self.direction == 'left':
+            #self.appearance = '../res/char_attack_left.png'
             print('left action')
         elif self.direction == 'right':
+            #self.appearance = '../res/char_attack_right.png'
             print('right action')
 
