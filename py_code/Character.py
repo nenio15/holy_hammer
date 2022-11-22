@@ -4,10 +4,10 @@ class Character:
     def __init__(self, width, height):
         self.appearance = '64_char.png'
         self.state = None
-        self.speed = 5
+        self.speed = 6
         self.size = 32 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
-        self.center = np.array([(int)(self.position[0] + self.size), (int)(self.position[1] + self.size)])
+        self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
         self.outline = '#FFFFFF'
         self.direction = 'right'
         
@@ -46,15 +46,11 @@ class Character:
 
     def action(self):
         if self.direction == 'up':
-            #self.appearance = '../res/char_attack_up.png'
-            print('up action')
+            self.appearance = '../res/char_attack_up.png'
         elif self.direction == 'down':
-            #self.appearance = '../res/char_attack_down.png'
-            print('down action')
+            self.appearance = '../res/char_attack_down.png'
         elif self.direction == 'left':
-            #self.appearance = '../res/char_attack_left.png'
-            print('left action')
+            self.appearance = '../res/char_attack_left.png'
         elif self.direction == 'right':
-            #self.appearance = '../res/char_attack_right.png'
-            print('right action')
+            self.appearance = '../res/char_attack_right.png'
 

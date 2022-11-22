@@ -10,7 +10,7 @@ from Joystick import Joystick
 from Enemy import Enemy
 
 def main():
-    space = 10
+    space = 0
     joystick = Joystick()
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     my_img = Image.open("64_char.png")
@@ -27,8 +27,9 @@ def main():
     
     rand_x = random.randint(-32, 240)
     rand_y = random.randint(-32, 240)
-    print(rand_x + rand_y)
-    enemy_1 = Enemy('ghost', (50, 50))
+    print(rand_x)
+    print(rand_y)
+    enemy_1 = Enemy('ghost', (rand_x, rand_y))
     enemy_list = [enemy_1]
 
     while True:
@@ -51,26 +52,23 @@ def main():
             command['move'] = True
             
         if not joystick.button_A.value:
-            my_character.action(True)
-            print("A_pressed")
+            my_character.action()
+            # print("A_pressed")
 
         my_character.move(command)
         my_img = Image.open(my_character.appearance)
+
+        #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
+        my_image.paste(background, (space, space))
+
+        
         for enemy in enemy_list:
             if enemy.state != 'die':
                 enemy.move(my_character.center)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
-
-
-        #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
-
-        my_image.paste(background, (space, space))
-        # 얘는 음수로 가면 오류나네요, 막기는 쉬운데.. 약간은 캐릭터가 들어가도록 하고 싶은데...
-        # my_image.alpha_composite(my_img, tuple(my_character.position))
         my_image.paste(my_img, tuple(my_character.position), my_img)
-        
-        
-    #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
+
+        #좌표는 이미지만 넣으면 180도 돌릴필요 엄서요..
         joystick.disp.image(my_image, 180, space, space)
 
 
