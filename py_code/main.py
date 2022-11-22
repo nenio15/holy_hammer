@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-from PIL import Image
 import time
 import random
 import cv2 as cv
@@ -8,6 +7,7 @@ from colorsys import hsv_to_rgb
 
 from Character import Character
 from Joystick import Joystick
+from Enemy import Enemy
 
 def main():
     space = 10
@@ -17,7 +17,7 @@ def main():
     background = Image.open("background1.png")
     # my_img = img.resize((32, 32))
     my_draw = ImageDraw.Draw(my_image)
-    # 배경화면 초기화?
+    # # 배경화면 초기화?
     my_draw.rectangle((space, space, joystick.width + space, joystick.height + space), fill=(255, 0, 0, 100))
     joystick.disp.image(my_image, 180, space, space)
     # 캐릭터 위치, 배경화면 초기화
@@ -25,6 +25,9 @@ def main():
     # my_draw.rectangle((0, 0, joystick.width, joystick.height), fill = (255, 255, 255, 100))
     my_image.paste(background, (space, space))
     
+    rand_x = random.randint(-32, 240)
+    rand_y = random.randint(-32, 240)
+    print(rand_x + rand_y)
     enemy_1 = Enemy('ghost', (50, 50))
     enemy_list = [enemy_1]
 
@@ -48,9 +51,11 @@ def main():
             command['move'] = True
             
         if not joystick.button_A.value:
+            my_character.action(True)
             print("A_pressed")
 
         my_character.move(command)
+        my_img = Image.open(my_character.appearance)
         for enemy in enemy_list:
             if enemy.state != 'die':
                 enemy.move(my_character.center)
@@ -63,7 +68,6 @@ def main():
         # 얘는 음수로 가면 오류나네요, 막기는 쉬운데.. 약간은 캐릭터가 들어가도록 하고 싶은데...
         # my_image.alpha_composite(my_img, tuple(my_character.position))
         my_image.paste(my_img, tuple(my_character.position), my_img)
-        
         
         
     #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
