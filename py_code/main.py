@@ -13,7 +13,6 @@ def main():
     space = 0
     joystick = Joystick()
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
-    my_img = Image.open("64_char.png")
     background = Image.open("background1.png")
     # my_img = img.resize((32, 32))
     my_draw = ImageDraw.Draw(my_image)
@@ -22,6 +21,7 @@ def main():
     joystick.disp.image(my_image, 180, space, space)
     # 캐릭터 위치, 배경화면 초기화
     my_character = Character(joystick.width, joystick.height)
+    my_img = Image.open(my_character.appearance)
     # my_draw.rectangle((0, 0, joystick.width, joystick.height), fill = (255, 255, 255, 100))
     my_image.paste(background, (space, space))
     

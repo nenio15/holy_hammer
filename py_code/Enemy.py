@@ -44,10 +44,11 @@ class Enemy:
         # 아닌데.. 캐릭터가 공격한 상태에서는 새로운 충돌판정을 물어야해
         # 새 충돌에서 방향받아서, 그 방향의 망치 범위일때가 필요한 거야.
 
-        if c.status == 'punch': # 
+        if c.state == 'punch': # ddd
             if c.diretion == 'up':
                 if abs(ego_center[0] - c.center[0]) < (64 + 32) and abs(ego_center[1] - c.center[1]) < (64 + 32):
                     return
 
-        if abs(ego_center[0] - c.center[0]) < (64 + 32) and abs(ego_center[1] - c.center[1]) < (64 + 32):
+        # 캐릭터가 너무 큰거같은데...   240x240
+        if abs(ego_center[0] - c.center[0]) < (28) and abs(ego_center[1] - c.center[1]) < (54):
             return 'hit'

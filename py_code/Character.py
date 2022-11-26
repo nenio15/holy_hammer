@@ -3,9 +3,9 @@ from time import time, sleep
 
 class Character:
     def __init__(self, width, height):
-        self.appearance = '64_char.png'
+        self.appearance = '../res/char_right.png'
         self.name = 'midory'
-        self.state = None
+        self.state = 'normal'
         self.speed = 6
         self.size = 32 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
@@ -36,12 +36,12 @@ class Character:
 
             if command['left_pressed']:
                 self.position[0] -= self.speed
-                self.appearance = '../res/64_char_left.png'
+                self.appearance = '../res/char_left.png'
                 self.direction = 'left'
                 
             if command['right_pressed']:
                 self.position[0] += self.speed
-                self.appearance = '../res/64_char_right.png'
+                self.appearance = '../res/char_right.png'
                 self.direction = 'right'
 
             #center update
