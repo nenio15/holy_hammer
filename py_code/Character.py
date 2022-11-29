@@ -30,12 +30,10 @@ class Character:
             self.appearance = '../res/64_char_' + self.direction + ".png"
 
         if command['move'] == False:
-            self.state = None
-            # self.outline = '#FFFFFF' #검정색상 코드!
+            self.state = 'normal'
         
-        elif time() > self.delay + 3: # 후딜 3초 후.. 왜 이거 무거워 보이지.. #왜 코드 변경이 없냐..?
+        else: # 여기 뭐 있었는지 아시는분~
             self.state = 'move'
-            # self.outline = "#FF0000" #빨강색상 코드!
 
             if command['up_pressed']:
                 self.position[1] -= self.speed

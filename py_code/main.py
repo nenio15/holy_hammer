@@ -46,10 +46,14 @@ def main():
 
         
         for enemy in enemy_list:
-            if enemy.state != 'dead':
+            if enemy.state == 'dead':
+                print("delete enemy ${enemy.center[0]} ${enemy.center[1]}")
+                enemy_list.remove(enemy) # 이거는 어떤 value를 지울까요? 많이 만들어 두면 알겠지요..
+            else:
                 enemy.move(my_character.center)
                 enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
+        
         my_image.paste(my_img, tuple(my_character.position), my_img)
 
         #좌표는 이미지만 넣으면 180도 돌릴필요 엄서요..

@@ -16,7 +16,7 @@ class Enemy:
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
         self.outline = '#FFFFFF'
         
-
+    # 얘는 거리 비례에서 speed를 약간 조절할까요..? ex) speed / (distance)
     def move(self, char_center):
         if(self.center[0] < char_center[0]):
             self.position[0] += self.speed
