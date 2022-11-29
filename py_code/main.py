@@ -41,10 +41,12 @@ def main():
 
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
         my_image.paste(background, (space, space))
+        my_draw.text((0, 0), "score ${my_charater.score}", fill="#FFFFFF")
+        my_draw.text((200, 0), "LIFE : ${my_charater.life}", fill="#FFFFFF") # ani로 하고 싶었어...
 
         
         for enemy in enemy_list:
-            if enemy.state != 'die':
+            if enemy.state != 'dead':
                 enemy.move(my_character.center)
                 enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
@@ -74,6 +76,11 @@ def playerCommand(command, joystick, character):
             character.action()
             character.delay = time() # 누른 시간 기록
             # print("A_pressed")
+    if not joystick.button_B.value:
+            # 달리, roll action으로 해결
+            character.action()
+            character.delay = time()
+
     return command
 
 if __name__ == '__main__':

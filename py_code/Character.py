@@ -1,5 +1,5 @@
 import numpy as np
-from time import time, sleep
+from time import time
 
 class Character:
     def __init__(self, width, height):
@@ -13,14 +13,27 @@ class Character:
         self.outline = '#FFFFFF'
         self.direction = 'right'
         self.delay = -3
-        
+        self.rolling = -3
+        self.life = 3
+        self.score = 0
+
 
     def move(self, command = None):
+        if self.state == 'damaged':
+            # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
+            # self.delay = 3
+            self.life -= 1
+            self.score -= 100
+
+        if time() > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
+            self.state = 'normal'
+            self.appearance = '../res/64_char_' + self.direction + ".png"
+
         if command['move'] == False:
             self.state = None
             # self.outline = '#FFFFFF' #검정색상 코드!
         
-        elif time() > self.delay + 3 : # 후딜 3초 후.. 왜 이거 무거워 보이지..
+        elif time() > self.delay + 3: # 후딜 3초 후.. 왜 이거 무거워 보이지.. #왜 코드 변경이 없냐..?
             self.state = 'move'
             # self.outline = "#FF0000" #빨강색상 코드!
 
@@ -51,11 +64,19 @@ class Character:
         self.state = 'punch'    # 이걸로..?
         if self.direction == 'up':
             self.appearance = '../res/char_attack_up.png'
-            sleep(3)    # 캐릭터만 잘까요? 프로그램이 잘까요?
-            print("action delay...")
         elif self.direction == 'down':
             self.appearance = '../res/char_attack_down.png'
         elif self.direction == 'left':
             self.appearance = '../res/char_attack_left.png'
         elif self.direction == 'right':
             self.appearance = '../res/char_attack_right.png'
+
+    def dodge(self):
+        if time() > self.rolling + 0.5:
+            self.state = 'dodge'
+            self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
+            print("dodge!!")
+            self.move()
+            self.speed = 6
+            self.state = 'normal'
+            print("come back")

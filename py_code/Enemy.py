@@ -2,11 +2,11 @@ import numpy as np
 from PIL import Image
 
 class Enemy:
-    def __init__(self, type, spawn_position):
+    def __init__(self, typee, spawn_position):
         self.shape = Image.open('../simple_zombie.png')
         self.size = 32
-        self.name = type
-        if type == 'ghost':
+        self.name = typee
+        if typee == 'ghost':
             self.shape = Image.open('../res/simple_ghost.png')
             self.size = 28
 
@@ -34,21 +34,47 @@ class Enemy:
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
 
     def collision_check(self, character):   # obj도 추가할 것
+        
         collision = self.overlapCharacter(self.center, character)
 
         if collision == 'hit':
+            character.state == 'damaged' #여기서 함수를 호출해도 되는데 그건 조금?
             print("character hit!!")
+        if collision == 'damaged':
+            print("moster is dead...")
+            self.state = 'dead'
+            if self.size == 32: # type을 따로 self.에 받을까?
+                character.score += 100  # random함수로 점수 무작위?
+            if self.size == 28:
+                character.score += 50  # random함수로 점수 무작위?
 
     def overlapCharacter(self, ego_center, c):
         # 캐릭터와의 거리 -> 캐릭터의 액션 상태(punch, run) -> 그리고 반환값 여럿
         # 아닌데.. 캐릭터가 공격한 상태에서는 새로운 충돌판정을 물어야해
         # 새 충돌에서 방향받아서, 그 방향의 망치 범위일때가 필요한 거야.
+        center_col = np.array([abs(ego_center[0] - c.center[0]), abs(ego_center[1] - c.center[1])])
 
+        # x좌표는 28, y좌표는 54 정도가 적정선? 지금의,
+        if c.state != 'dodge': # 회피처리
+            if center_col[0] < 28 and center_col[1] < 54:
+                return 'hit'
+
+        # 맞는 것은 적. 충돌 판정은 후할지도..?
         if c.state == 'punch': # ddd
-            if c.diretion == 'up':
-                if abs(ego_center[0] - c.center[0]) < (64 + 32) and abs(ego_center[1] - c.center[1]) < (64 + 32):
-                    return
+            if c.direction == 'up':
+                if center_col[0] < self.size and center_col[1] - 20 < self.size:
+                    return 'damaged'
 
-        # 캐릭터가 너무 큰거같은데...   240x240
-        if abs(ego_center[0] - c.center[0]) < (28) and abs(ego_center[1] - c.center[1]) < (54):
-            return 'hit'
+            if c.direction == 'down':
+                if center_col[0] < self.size and center_col[1] + 20 < self.size:
+                    return 'damaged'
+                    
+            if c.direction == 'left':
+                if center_col[0] - 20 < self.size and center_col[1] < self.size:
+                    return 'damaged'
+                    
+            if c.direction == 'right':
+                if center_col[0] + 20 < self.size and center_col[1] < self.size:
+                    return 'damaged'
+
+        
