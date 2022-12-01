@@ -69,12 +69,13 @@ class Character:
         elif self.direction == 'right':
             self.appearance = '../res/char_attack_right.png'
 
-    def dodge(self):
-        if time() > self.rolling + 0.5:
+    def dodge(self, command):
+        if time() > self.rolling + 1:
             self.state = 'dodge'
             self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
             print("dodge!!")
-            self.move()
-            self.speed = 6
+            self.move(command)
+
             self.state = 'normal'
+            self.speed = 6
             print("come back")

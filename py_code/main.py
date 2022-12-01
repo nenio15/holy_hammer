@@ -8,10 +8,12 @@ from colorsys import hsv_to_rgb
 from Character import Character
 from Joystick import Joystick
 from Enemy import Enemy
+from Block import Block
 
 def main():
     space = 0
     joystick = Joystick()
+    block = Block(120, 120, 'map')
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     background = Image.open("background1.png")
     # my_img = img.resize((32, 32))
@@ -37,6 +39,8 @@ def main():
         # this can move to other def?
         command = playerCommand(command, joystick, my_character)
         my_character.move(command)
+        block.mapLimit(my_character)
+        
         my_img = Image.open(my_character.appearance)
 
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
@@ -82,8 +86,9 @@ def playerCommand(command, joystick, character):
             # print("A_pressed")
     if not joystick.button_B.value:
             # 달리, roll action으로 해결
-            character.action()
-            character.delay = time()
+            character.dodge(command)
+            command['move'] = False # dodge만 하자. move는 말고.(맞냐?)
+            character.rolling = time()
 
     return command
 
