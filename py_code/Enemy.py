@@ -18,6 +18,8 @@ class Enemy:
         
     # 얘는 거리 비례에서 speed를 약간 조절할까요..? ex) speed / (distance)
     def move(self, char_center):
+        # 3 > speed: speed += 0.1 (점점 되돌아오기...)
+
         if(self.center[0] < char_center[0]):
             self.position[0] += self.speed
 
@@ -43,6 +45,7 @@ class Enemy:
         if collision == 'damaged':
             print("moster is dead...")
             self.state = 'dead'
+            # 시체는 없을거야. 근데 뿅하고 사라지겠네
             if self.size == 32: # type을 따로 self.에 받을까?
                 character.score += 100  # random함수로 점수 무작위?
             if self.size == 28:
