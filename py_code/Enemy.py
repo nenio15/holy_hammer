@@ -31,10 +31,10 @@ class Enemy:
             self.position[0] -= self.speed
             # print(self.position[0])
 
-        if(self.center[1] < char_center[1] + 10):
+        if(self.center[1] < char_center[1] + 4):
             self.position[1] += self.speed
 
-        elif(self.center[1] > char_center[1] + 10):
+        elif(self.center[1] > char_center[1] + 4):
             self.position[1] -= self.speed
 
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
@@ -83,6 +83,6 @@ class Enemy:
 
         # x좌표는 28, y좌표는 54 정도가 적정선? 지금의,
         if c.state != 'dodge': # 회피처리
-            if center_col[0] < 28 and center_col[1] < 54:
+            if center_col[0] < 14 and center_col[1] < 27:
                 return 'hit'
         

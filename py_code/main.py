@@ -29,8 +29,6 @@ def main():
     
     rand_x = random.randint(-32, 240)
     rand_y = random.randint(-32, 240)
-    # print(rand_x)
-    # print(rand_y)
     enemy_1 = Enemy('ghost', (rand_x, rand_y))
     enemy_list = [enemy_1]
     stage = Stage(1)

@@ -7,7 +7,7 @@ class Character:
         self.name = 'midory'
         self.state = 'normal'
         self.speed = 3
-        self.size = 32 # half_size
+        self.size = 16 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
         self.outline = '#FFFFFF'
