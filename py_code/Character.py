@@ -17,12 +17,15 @@ class Character:
         self.rolling = -3
         self.life = 3
         self.score = 0
+        self.pushB = 0  # 이거 초기화 어디가서함?
 
 
     def move(self, command = None):
-        if self.state == 'damaged':
-            if time() > self.damageDelay + 1:
+
+        if time() > self.damageDelay + 1:
+            if self.state == 'damaged':        
             # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
+                # get ani(damaged)
                 self.life -= 1
                 # self.score -= 100
                 self.damageDelay = time()
@@ -72,12 +75,15 @@ class Character:
         elif self.direction == 'right':
             self.appearance = '../res/char_attack_right.png'
 
+    def dash(self, command):
+        self.state = 'dash'
+        self.speed = 6
+        self.pushB += 1
+
     def dodge(self, command):   # 애니 / 그림 필요
         self.state = 'dodge'
         self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
         # 프레임으로 할당할거면, 달리, 대충 여기다가 애니하나 넣어야..
         self.move(command)
-
-        
         self.state = 'normal'
-        self.speed = 3
+        

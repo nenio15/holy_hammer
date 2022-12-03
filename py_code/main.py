@@ -85,11 +85,16 @@ def playerCommand(command, joystick, character):
         character.delay = time() # 누른 시간 기록
         # print("A_pressed")
     if not joystick.button_B.value:
-        if time() > character.rolling + 1:
-            # 달리, roll action으로 해결
-            character.dodge(command)
-            command['move'] = False # dodge만 하자. move는 말고.(맞냐?)
-            character.rolling = time()
+        character.dash(command)
+        if joystick.button_B.value:
+            print('get push and pull!!!!')
+            if character.pushB < 100 and time() > character.rolling + 0.7:
+                character.dodge(command)
+                character.rolling = time()
+                command['move'] = False
+            character.pushB = 0
+            character.speed = 3
+        # dodge만 하자. move는 말고.(맞냐?)
 
     return command
 
