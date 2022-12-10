@@ -14,7 +14,7 @@ from Stage import Stage
 def main():
     space = 0
     joystick = Joystick()
-    block = Block(120, 120, 'map')
+    # block = Block(50, 50, 'map')
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     background = Image.open("background1.png")
     my_draw = ImageDraw.Draw(my_image)
@@ -31,18 +31,20 @@ def main():
     rand_y = random.randint(-32, 240)
     enemy_1 = Enemy('ghost', (rand_x, rand_y))
     enemy_list = [enemy_1]
-    stage = Stage(1)
+    block_list = []
+    stage = Stage(1)    #1
 
     while True:
-        block_list = stage.startStage(enemy_list)
+        block_list = stage.showStage(block_list)
+        stage.startStage(enemy_list)
 
         command = {'move': False, 'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?
         command = playerCommand(command, joystick, my_character)
         my_character.move(command)
-        # print(my_character.state)
-        block.mapLimit(my_character)
-        
+        block_list[0].mapLimit(my_character)
+        #block.collision(my_character)
+
         my_img = Image.open(my_character.appearance)
 
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
@@ -50,20 +52,30 @@ def main():
         my_draw.text((0, 0), "score "+ str(my_character.score), fill="#FFFFFF")
         my_draw.text((180, 0), "LIFE : "+str(my_character.life), fill="#FFFFFF") # ani로 하고 싶었어...
 
+        for block in block_list:
+            my_image.paste(block.shape, tuple(block.position), block.shape)
+            block.collision(my_character)
         
         for enemy in enemy_list:
-            if enemy.state == 'dead':
-                enemy_list.remove(enemy) # 이거는 어떤 value를 지울까요? 많이 만들어 두면 알겠지요..
-            else:
+            if enemy.state != 'dead':
                 enemy.move(my_character.center)
+                for block in block_list:
+                    block.collision(enemy)
+
+                #block.collision(enemy)
                 enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
+            else:
+                enemy_list.remove(enemy) # 이거... 다른 list에 영향을 줌(시각적으로)
         
-        # for block in block_list:
-        my_image.paste(block.shape, tuple(block.block1_1), block.shape)
-
+        # 피격시에는, 달리 해야...?
         my_image.paste(my_img, tuple(my_character.position), my_img)
-
+        
+        # get blend
+        # my_img_trans = Image.new("RGBA", my_img.size)
+        # my_img_trans = Image.blend(my_img_trans, my_img, 0.5)
+        # my_image.paste(my_img_trans, tuple(my_character.position), my_img_trans)
+        
         #좌표는 이미지만 넣으면 180도 돌릴필요 엄서요..
         joystick.disp.image(my_image, 180, space, space)
 
@@ -91,12 +103,14 @@ def playerCommand(command, joystick, character):
         
     if not joystick.button_B.value:
         character.dash(command)
+        
 
     if joystick.button_B.value:
         # pushB 눌린정도. rolling 쿨타임
+        # print(character.state)
         if character.state == 'dash' and character.pushB < 100 and time() > character.rolling + 0.7:
-                print("dodged!!!")
-                character.dodge(command)
+                # print("dodged!!!")
+                # character.dodge(command) # 일단 보류(이미지도 없엉)
                 character.rolling = time()
                 command['move'] = False
                 character.pushB = 0

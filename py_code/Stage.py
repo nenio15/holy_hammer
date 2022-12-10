@@ -8,7 +8,7 @@ class Stage:
     def __init__(self, index):
         self.setTime = time()
         self.stage = 1
-        self.step = 0
+        self.step = -1
         self.stage_list = [5, 10, 11, 23] #이걸로 숫자 조정하자..
         # index는 이거 아니야...
         if index == 1:
@@ -20,11 +20,13 @@ class Stage:
         # self.position = np.array([120, 120])
 
     # 스테이지를 바꾸는 애니메이션도 있어야죠..? ( 언제 호출할지는 main의 함수를 따로 둘겁니다만..)
-    def showStage(self):
-        if self.stage == 1:
+    def showStage(self, blocks):
+        if self.stage == 1 and self.step == -1:
+            block_list = [Block(50, 50, '32'), Block(30, 30, '32')]
             
             print('stage 1 start!!')
-            return Block().block1_1
+            return block_list
+        return blocks
 
     # 항상 main에서 갱신. 여기서 showStage할것.?
     def startStage(self, enemy_list):
@@ -32,7 +34,6 @@ class Stage:
         # step을 index, progress를 원소로 지녀서 관리..?(stage_list처럼)
         if self.step == -1 and progress > 0:
             self.step += 1
-            return self.showStage()
 
         if self.step == 0 and progress > 3 :
             print('call...1')

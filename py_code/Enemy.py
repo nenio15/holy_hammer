@@ -34,10 +34,10 @@ class Enemy:
                 self.shape = Image.open('../res/simple_zombie_left.png')
             # print(self.position[0])
 
-        if(self.center[1] < char_center[1] + 4):
+        if(self.center[1] < char_center[1]):
             self.position[1] += self.speed
 
-        elif(self.center[1] > char_center[1] + 4):
+        elif(self.center[1] > char_center[1]):
             self.position[1] -= self.speed
 
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
@@ -73,7 +73,7 @@ class Enemy:
                     return 'damaged'
 
             if c.direction == 'down':
-                if center_col[0] < self.width + 16 and center_col[1] + 20 < self.size:
+                if center_col[0] < self.width + 16 and center_col[1] + 10 < self.size:
                     return 'damaged'
                     
             if c.direction == 'left':

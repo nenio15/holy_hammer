@@ -37,7 +37,7 @@ class Character:
                 self.appearance = '../res/char_' + self.direction + ".png"
 
         else: # 여기 뭐 있었는지 아시는분~
-            self.state = 'move'
+            # self.state = 'move'
 
             if command['up_pressed']:
                 self.position[1] -= self.speed
