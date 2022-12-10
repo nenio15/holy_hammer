@@ -15,7 +15,7 @@ class Character:
         self.delay = -3
         self.damageDelay = -3
         self.rolling = -3
-        self.life = 3
+        self.life = 5
         self.score = 0
         self.pushB = 0  # 이거 초기화 어디가서함?
 
@@ -26,17 +26,21 @@ class Character:
             if self.state == 'damaged':        
             # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
                 # get ani(damaged)
+                # 다치면.. 공격판정이 이상해진다. 캐릭터 문제거나, 좀비쪽 문제
+                self.state = 'normal'
                 self.life -= 1
                 # self.score -= 100
                 self.damageDelay = time()
 
+        if command['punch']:
+            self.action()
         
         if command['move'] == False:
             if time() > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
                 self.state = 'normal'
                 self.appearance = '../res/char_' + self.direction + ".png"
 
-        else: # 여기 뭐 있었는지 아시는분~
+        elif time() > self.delay + 0.3: # 여기 뭐 있었는지 아시는분~
             # self.state = 'move'
 
             if command['up_pressed']:
@@ -62,9 +66,9 @@ class Character:
             #center update
             self.center = np.array([(int)(self.position[0] + self.size), (int)(self.position[1] + self.size)])
 
-    # punch가 안 바뀌는데요?
     def action(self):
         self.state = 'punch'    # 이걸로..?
+        #print(self.direction)
         if self.direction == 'up':
             self.appearance = '../res/char_up_punch.png'
         elif self.direction == 'down':

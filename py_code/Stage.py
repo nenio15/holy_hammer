@@ -9,8 +9,10 @@ class Stage:
         self.setTime = time()
         self.stage = 1
         self.step = -1
+        # 한 번에 50마리는 무리. 30마리가 최대?
         self.stage_list = [5, 10, 11, 23] #이걸로 숫자 조정하자.. #2차원배열이어야..? 아니면 스테이지 바뀌면 거시기
-        # index는 이거 아니야...
+        
+        # ..? 안쓸듯
         if index == 1:
             self.zomCnt = 10
             self.ghoCnt = 5
@@ -21,7 +23,9 @@ class Stage:
     # 스테이지를 바꾸는 애니메이션도 있어야죠..? ( 언제 호출할지는 main의 함수를 따로 둘겁니다만..)
     def showStage(self):
         if self.stage == 1:
-            block_list = [Block(70, 50, '32'), Block(70, 50, '32'), Block(70, 70, '32'),
+            # 배경그림으로 만들것.
+            # + x,y좌표가 center가 아닐수도 있음에 주의
+            block_list = [Block(70, 50, '32'), Block(50, 70, '32'), Block(70, 70, '32'),
                     Block(70, 190, '32'), Block(50, 190, '32'), Block(70, 170, '32'),
                     Block(190, 70, '32'), Block(190, 50, '32'), Block(170, 70, '32'),
                     Block(170, 170, '32'), Block(170, 190, '32'), Block(190, 190, '32')]
@@ -50,9 +54,10 @@ class Stage:
             self.callZombie(enemy_list, self.stage_list[self.step])
             self.step += 1
         elif self.step == 2 and progress > 30:
-            if enemy_list.count < 1:
-                print('zero end')
-                self.stage = 2
+            pass
+            #if enemy_list.count < 1: # 이게 아냐..
+            #    print('zero end')
+            #    self.stage = 2
 
         return False
 

@@ -36,10 +36,10 @@ def main():
 
     while True:
         if stage.startStage(enemy_list):    # 스테이지 처음에만 실행
-            block_list = stage.showStage(block_list)
+            block_list = stage.showStage()
 
 
-        command = {'move': False, 'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
+        command = {'move': False, 'punch': False,'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?
         command = playerCommand(command, joystick, my_character)
         my_character.move(command)
@@ -53,8 +53,8 @@ def main():
         my_draw.text((0, 0), "score "+ str(my_character.score), fill="#FFFFFF")
         my_draw.text((180, 0), "LIFE : "+str(my_character.life), fill="#FFFFFF") # ani로 하고 싶었어...
 
-        for block in block_list:
-            my_image.paste(block.shape, tuple(block.position), block.shape)
+        for block in block_list: #...?
+            #my_image.paste(block.shape, tuple(block.position), block.shape)
             block.collision(my_character)
         
         for enemy in enemy_list:
@@ -63,15 +63,15 @@ def main():
                 for block in block_list:
                     block.collision(enemy)
 
-                #block.collision(enemy)
                 enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
             else:
-                enemy_list.remove(enemy) # 이거... 다른 list에 영향을 줌(시각적으로)
+                # 이거... 다른 list에 영향을 줌(시각적으로)
+                enemy_list.remove(enemy)   
         
         # 피격시에는, 달리 해야...?
         my_image.paste(my_img, tuple(my_character.position), my_img)
-        
+
         # get blend
         # my_img_trans = Image.new("RGBA", my_img.size)
         # my_img_trans = Image.blend(my_img_trans, my_img, 0.5)
@@ -99,7 +99,8 @@ def playerCommand(command, joystick, character):
             
     if not joystick.button_A.value:
         if time() > character.delay + 0.3:
-            character.action()
+            command['punch'] = True
+            # character.action()
             character.delay = time() # 누른 시간 기록
         
     if not joystick.button_B.value:
