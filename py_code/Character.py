@@ -6,7 +6,7 @@ class Character:
         self.appearance = '../res/char_right.png'
         self.name = 'midory'
         self.state = 'normal'
-        self.speed = 3
+        self.speed = 4
         self.size = 16 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
@@ -30,14 +30,12 @@ class Character:
                 # self.score -= 100
                 self.damageDelay = time()
 
-        if time() > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
-            self.state = 'normal'
-            self.appearance = '../res/char_' + self.direction + ".png"
-
-        if command['move'] == False:
-            # self.state = 'normal'
-            self.outline = "#FFFFFF"
         
+        if command['move'] == False:
+            if time() > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
+                self.state = 'normal'
+                self.appearance = '../res/char_' + self.direction + ".png"
+
         else: # 여기 뭐 있었는지 아시는분~
             self.state = 'move'
 
@@ -64,23 +62,24 @@ class Character:
             #center update
             self.center = np.array([(int)(self.position[0] + self.size), (int)(self.position[1] + self.size)])
 
-    def action(self):   # direction은 언제나 방향성을 유지한다.
+    # punch가 안 바뀌는데요?
+    def action(self):
         self.state = 'punch'    # 이걸로..?
         if self.direction == 'up':
-            self.appearance = '../res/char_attack_up.png'
+            self.appearance = '../res/char_up_punch.png'
         elif self.direction == 'down':
-            self.appearance = '../res/char_attack_down.png'
+            self.appearance = '../res/char_down_punch.png'
         elif self.direction == 'left':
-            self.appearance = '../res/char_attack_left.png'
+            self.appearance = '../res/char_left_punch.png'
         elif self.direction == 'right':
-            self.appearance = '../res/char_attack_right.png'
+            self.appearance = '../res/char_right_punch.png'
 
     def dash(self, command):
         self.state = 'dash'
-        self.speed = 6
+        self.speed = 7
         self.pushB += 1
 
-    def dodge(self, command):   # 애니 / 그림 필요
+    def dodge(self, command):   # 그림 필요
         self.state = 'dodge'
         self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
         # 프레임으로 할당할거면, 달리, 대충 여기다가 애니하나 넣어야..

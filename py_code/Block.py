@@ -1,4 +1,5 @@
 import numpy as np
+from PIL import Image
 
 class Block:
     def __init__(self, x, y, status):
@@ -6,6 +7,8 @@ class Block:
         # 벽같은 obj는, array로 좌표를 지닌다... obj로 개별적? 아니면 걍 array?
         self.center = np.array([(int)(x), (int)(y)])
         # self.array = np.array()
+        self.block1_1 = np.array([50, 50])#, [20, 20]) #, [100, 100])
+        self.shape = Image.open('../res/block16_1.png')
 
     def mapLimit(self, character):  # 맵은 여기서 처리.. (아니면 맵을 확장하던가)
         if character.center[0] < -5:
@@ -26,6 +29,23 @@ class Block:
         if character.name == 'midory':
             if character.center[0] < self.center[0]:
                 character.position[0] -= character.speed
+            elif character.center[0] > self.center[0]:
+                character.position[0] += character.speed
+
+            if character.center[1] < self.center[1]:
+                character.position[1] -= character.speed
+            elif character.center[1] < self.center[1]:
+                character.position[1] += character.speed
+
         elif character.name == 'zombie':
             if character.center[0] < self.center[0]:
                 character.position[0] -= character.speed
+            elif character.center[0] > self.center[0]:
+                character.position[0] += character.speed
+
+            if character.center[1] < self.center[1]:
+                character.position[1] -= character.speed
+            elif character.center[1] < self.center[1]:
+                character.position[1] += character.speed
+
+        

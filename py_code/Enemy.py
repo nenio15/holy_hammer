@@ -3,7 +3,7 @@ from PIL import Image
 
 class Enemy:
     def __init__(self, typee, spawn_position):
-        self.shape = Image.open('../res/simple_zombie.png')
+        self.shape = Image.open('../res/simple_zombie_right.png')
         self.size = 32
         self.width = 16
         self.name = typee
@@ -12,10 +12,9 @@ class Enemy:
         if typee == 'ghost':    # 변칙적이진 않다만, 플레이어 속도를 쫓아온다는 위협성..
             self.shape = Image.open('../res/simple_ghost.png')
             self.size = 20
-            self.speed = 1      # 3으로 할거면 달리기가 필요..
+            self.speed = 2      # 3으로 할거면 달리기가 필요..
 
         self.state = 'alive'
-        
         self.position = np.array([(spawn_position[0] - 16), (spawn_position[1] - 16)])
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
         self.outline = '#FFFFFF'
@@ -26,9 +25,13 @@ class Enemy:
 
         if(self.center[0] < char_center[0]):
             self.position[0] += self.speed
+            if self.size == 32:
+                self.shape = Image.open('../res/simple_zombie_right.png')
 
         elif(self.center[0] > char_center[0]):
             self.position[0] -= self.speed
+            if self.size == 32:
+                self.shape = Image.open('../res/simple_zombie_left.png')
             # print(self.position[0])
 
         if(self.center[1] < char_center[1] + 4):

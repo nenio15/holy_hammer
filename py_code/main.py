@@ -32,9 +32,10 @@ def main():
     enemy_1 = Enemy('ghost', (rand_x, rand_y))
     enemy_list = [enemy_1]
     stage = Stage(1)
-    stage.startStage(enemy_list)
 
     while True:
+        block_list = stage.startStage(enemy_list)
+
         command = {'move': False, 'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?
         command = playerCommand(command, joystick, my_character)
@@ -58,6 +59,9 @@ def main():
                 enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
         
+        # for block in block_list:
+        my_image.paste(block.shape, tuple(block.block1_1), block.shape)
+
         my_image.paste(my_img, tuple(my_character.position), my_img)
 
         #좌표는 이미지만 넣으면 180도 돌릴필요 엄서요..
@@ -81,20 +85,22 @@ def playerCommand(command, joystick, character):
         command['move'] = True
             
     if not joystick.button_A.value:
-        character.action()
-        character.delay = time() # 누른 시간 기록
-        # print("A_pressed")
+        if time() > character.delay + 0.3:
+            character.action()
+            character.delay = time() # 누른 시간 기록
+        
     if not joystick.button_B.value:
         character.dash(command)
-        if joystick.button_B.value:
-            print('get push and pull!!!!')
-            if character.pushB < 100 and time() > character.rolling + 0.7:
+
+    if joystick.button_B.value:
+        # pushB 눌린정도. rolling 쿨타임
+        if character.state == 'dash' and character.pushB < 100 and time() > character.rolling + 0.7:
+                print("dodged!!!")
                 character.dodge(command)
                 character.rolling = time()
                 command['move'] = False
-            character.pushB = 0
-            character.speed = 3
-        # dodge만 하자. move는 말고.(맞냐?)
+                character.pushB = 0
+        character.speed = 4
 
     return command
 
