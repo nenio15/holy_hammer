@@ -35,8 +35,9 @@ def main():
     stage = Stage(1)    #1
 
     while True:
-        block_list = stage.showStage(block_list)
-        stage.startStage(enemy_list)
+        if stage.startStage(enemy_list):    # 스테이지 처음에만 실행
+            block_list = stage.showStage(block_list)
+
 
         command = {'move': False, 'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?

@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from PIL import Image
 
 class Enemy:
@@ -9,6 +10,8 @@ class Enemy:
         self.name = typee
         self.speed = 1
         self.hit = 0
+        self.swing = random.randint(-5, 6)  # -5 ~ 5
+
         if typee == 'ghost':    # 변칙적이진 않다만, 플레이어 속도를 쫓아온다는 위협성..
             self.shape = Image.open('../res/simple_ghost.png')
             self.size = 20
@@ -17,28 +20,54 @@ class Enemy:
         self.state = 'alive'
         self.position = np.array([(spawn_position[0] - 16), (spawn_position[1] - 16)])
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
-        self.outline = '#FFFFFF'
+        self.direction = 'right'
         
+    def swing(self):
+        if self.swing > 0:
+            self.swing += 1
+            if self.swing > 5:
+                self.swing = 0
+                if self.direction == 'right' or 'left':
+                    self.position[1] += self.speed
+                else:
+                    self.position[0] += self.speed
+
+        elif self.swing < 0:
+            self.swing -= 1
+            if self.swing < -5:
+                self.swing = 0
+                if self.direction == 'right' or 'left':
+                    self.position[1] -= self.speed
+                else:
+                    self.position[0] -= self.speed
+
+        else:
+            self.swing = random.randint(-5, 6)
+
     # 얘는 거리 비례에서 speed를 약간 조절할까요..? ex) speed / (distance)
     def move(self, char_center):
         # 3 > speed: speed += 0.1 (점점 되돌아오기...)
 
         if(self.center[0] < char_center[0]):
             self.position[0] += self.speed
+            self.direction = 'right'
             if self.size == 32:
                 self.shape = Image.open('../res/simple_zombie_right.png')
 
         elif(self.center[0] > char_center[0]):
             self.position[0] -= self.speed
+            self.direction = 'left'
             if self.size == 32:
                 self.shape = Image.open('../res/simple_zombie_left.png')
             # print(self.position[0])
 
         if(self.center[1] < char_center[1]):
             self.position[1] += self.speed
+            self.direction = 'down'
 
         elif(self.center[1] > char_center[1]):
             self.position[1] -= self.speed
+            self.direction = 'up'
 
         self.center = np.array([(self.position[0] + 16), (self.position[1] + 16)])
 
