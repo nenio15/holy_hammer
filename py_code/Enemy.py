@@ -47,6 +47,7 @@ class Enemy:
         else:
             self.swing = random.randint(-4, 5)
 
+
     # 얘는 거리 비례에서 speed를 약간 조절할까요..? ex) speed / (distance)
     def move(self, char_center):
         # 3 > speed: speed += 0.1 (점점 되돌아오기...)
@@ -76,22 +77,25 @@ class Enemy:
             if self.size == 16:
                 self.shape = Image.open('../res/simple_zombie_left.png')
             # print(self.position[0])
+
         if self.name == 'zombie':
             self.movSwing()
 
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
 
+
     def collision_check(self, character):   # obj도 추가할 것
         
         collision = self.overlapCharacter(self.center, character)
 
+        # 캐릭터 공격
         if collision == 'hit':
             character.state = 'damaged' #여기서 함수를 호출해도 되는데 그건 조금?
-# 이동의 변칙성.. 속도 차이. 직선, 지그재그 등의 변칙성
-            # print("character hit!!")
+
+        # 피격
         if collision == 'damaged':
             print(self.hit)
-            self.hit += 1
+            self.hit += 1       # 이거 그대로 3 올라가는데요?
             collision = 'none'
             if self.hit > 2:
                 self.state = 'dead'
@@ -101,13 +105,11 @@ class Enemy:
                 if self.size == 8:
                     character.score += 50
 
+
     def overlapCharacter(self, ego_center, c):
-        # 캐릭터와의 거리 -> 캐릭터의 액션 상태(punch, run) -> 그리고 반환값 여럿
-        # 아닌데.. 캐릭터가 공격한 상태에서는 새로운 충돌판정을 물어야해
         # 새 충돌에서 방향받아서, 그 방향의 망치 범위일때가 필요한 거야
         center_col = np.array([(ego_center[0] - c.center[0]), (ego_center[1] - c.center[1])])
         
-        # 맞는 것은 적. 충돌 판정은 후할지도..?
         # 렉이 걸릴 수준이면, 판정이 인식이 안 된다..
         if c.state == 'punch': # ddd
             if c.direction == 'up':
@@ -132,4 +134,3 @@ class Enemy:
         if c.state != 'dodge': # 회피처리
             if abs(center_col[0]) < 12 and abs(center_col[1]) < 24:
                 return 'hit'
-        

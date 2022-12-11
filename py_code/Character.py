@@ -10,7 +10,6 @@ class Character:
         self.size = 16 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
-        self.outline = '#FFFFFF'
         self.direction = 'right'
         self.delay = -3
         self.damageDelay = -3
@@ -18,11 +17,14 @@ class Character:
         self.life = 5
         self.score = 0
         self.pushB = 0  # 이거 초기화 어디가서함?
+        self.effect = 0
+        # self.item = 0
 
+    def checkManager(self, command = None):
+        checkTime = time()
 
-    def move(self, command = None):
-
-        if time() > self.damageDelay + 1:
+        # 피격 판정
+        if checkTime > self.damageDelay + 1:
             if self.state == 'damaged':        
             # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
                 # get ani(damaged)
@@ -30,17 +32,23 @@ class Character:
                 self.state = 'normal'
                 self.life -= 1
                 # self.score -= 100
-                self.damageDelay = time()
-
+                self.damageDelay = checkTime
+        
+        # 공격
         if command['punch']:
             self.action()
         
+        self.move(checkTime, command)
+        
+
+    def move(self, curTime, command = None): # move가 아니라,, 체크인데?
+
         if command['move'] == False:
-            if time() > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
+            if curTime > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
                 self.state = 'normal'
                 self.appearance = '../res/char_' + self.direction + ".png"
 
-        elif time() > self.delay + 0.3: # 여기 뭐 있었는지 아시는분~
+        elif curTime > self.delay + 0.3: # 여기 뭐 있었는지 아시는분~
             # self.state = 'move'
 
             if command['up_pressed']:
@@ -90,3 +98,21 @@ class Character:
         self.move(command)
         self.state = 'normal'
         
+    def special(self, index): # 1:power 2:speed 3:heart 4:invisibility
+        if index == 1:
+            pass
+        elif index == 2:
+            self.speed = 8  # dash는 어쩌고?
+        elif index == 3:
+            if self.life < 5:
+                self.life += 1
+        elif index == 4:
+            self.effect = 10 # 특수상태를 어찌 표현하나요?
+
+        if time() > self.effect + 15: # 효과 종료시키기
+            if index == 1:
+                pass
+            elif index == 2:
+                self.speed = 3  # back
+            elif index == 4:
+                pass # 여기서 효과를...

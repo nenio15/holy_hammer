@@ -36,7 +36,7 @@ class Stage:
             block_list = []
 
             return block_list
-        # return blocks
+
 
     # 항상 main에서 갱신
     def startStage(self, enemy_list):
@@ -54,7 +54,7 @@ class Stage:
             self.callZombie(enemy_list, self.stage_list[self.step])
             self.step += 1
         elif self.step == 2 and progress > 30:
-            pass
+            pass    # 적이 전부 죽어야 다음 스테이지로..
             #if enemy_list.count < 1: # 이게 아냐..
             #    print('zero end')
             #    self.stage = 2
@@ -64,12 +64,24 @@ class Stage:
     # 대충.. time을 따로 해서, zom 나오는 수 조정, gho 나오는 수 조정
     def callZombie(self, enemy_list, cnt):
         for i in range(cnt):
-            # 맵 밖에서 소환..(다시 돌지를 않네..?)
+            # 맵 밖에서 소환..(구현 필요..) 대충 for로 ??
             pos = np.array([random.randint(-32, 272), random.randint(-32, 272)])
             # if (pos[0] < 0 or pos[0] > 240) and (pos[1] < 0 or pos[1] > 240):
-            # print('call zombie')
             enemy = Enemy('zombie', (random.randint(-32, 272), random.randint(-32, 272)))
             enemy_list.extend([enemy])
             # else:
             #    i -= 1
             #    print('reroll')
+
+class Item:
+    def __init__(self, x, y, index):
+        self.position = np.array([x, y])
+        self.center = np.array([x - 8, y - 8])
+        self.number = index # 1:power 2:speed 3:heart 4:invincibility
+        self.delay = 0  # 무슨 용도더라..
+
+    def getItem(self, char):
+        if -8 < char.center[0] - self.center[0] < 8:
+            if -8 < char.center[1] - self.center[1] < 8:
+                char.effect = time()
+                char.special(self.number)

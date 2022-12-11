@@ -14,7 +14,6 @@ from Stage import Stage
 def main():
     space = 0
     joystick = Joystick()
-    # block = Block(50, 50, 'map')
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     background = Image.open("background1.png")
     my_draw = ImageDraw.Draw(my_image)
@@ -24,7 +23,6 @@ def main():
     # 캐릭터 위치, 배경화면 초기화
     my_character = Character(joystick.width, joystick.height)
     my_img = Image.open(my_character.appearance)
-    # my_draw.rectangle((0, 0, joystick.width, joystick.height), fill = (255, 255, 255, 100))
     my_image.paste(background, (space, space))
     
     rand_x = random.randint(-32, 240)
@@ -37,12 +35,13 @@ def main():
     while True:
         if stage.startStage(enemy_list):    # 스테이지 처음에만 실행
             block_list = stage.showStage()
-
+        # ?
 
         command = {'move': False, 'punch': False,'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?
         command = playerCommand(command, joystick, my_character)
-        my_character.move(command)
+        my_character.checkManager(command)
+         #my_character.move(command)
         block_list[0].mapLimit(my_character)
         #block.collision(my_character)
 
