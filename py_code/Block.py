@@ -10,8 +10,8 @@ class Block:
             self.halfSize = np.array([32, 32])
             self.shape = Image.opne('../res/block16_1.png')
 
-        self.center = np.array([(int)(x), (int)(y)])
-        self.position = np.array([x - self.halfSize[0], y - self.halfSize[1]])#, [20, 20]) #, [100, 100])
+        self.position = np.array([(int)(x), (int)(y)])
+        self.center = np.array([x + self.halfSize[0], y + self.halfSize[1]])#, [20, 20]) #, [100, 100])
 
     def mapLimit(self, character):  # 맵은 여기서 처리.. (아니면 맵을 확장하던가)
         if character.center[0] < -5:

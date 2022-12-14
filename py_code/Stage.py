@@ -25,10 +25,10 @@ class Stage:
         if self.stage == 1:
             # 배경그림으로 만들것.
             # + x,y좌표가 center가 아닐수도 있음에 주의
-            block_list = [Block(70, 50, '32'), Block(50, 70, '32'), Block(70, 70, '32'),
-                    Block(70, 190, '32'), Block(50, 190, '32'), Block(70, 170, '32'),
-                    Block(190, 70, '32'), Block(190, 50, '32'), Block(170, 70, '32'),
-                    Block(170, 170, '32'), Block(170, 190, '32'), Block(190, 190, '32')]
+            block_list = [Block(60, 30, '32'), Block(30, 60, '32'), Block(60, 60, '32'),
+                    Block(180, 30, '32'), Block(210, 60, '32'), Block(180, 60, '32'),
+                    Block(30, 180, '32'), Block(60, 210, '32'), Block(60, 180, '32'),
+                    Block(210, 180, '32'), Block(180, 210, '32'), Block(180, 180, '32')]
             
             print('stage 1 start!!')
             return block_list
@@ -78,10 +78,10 @@ class Item:
         self.position = np.array([x, y])
         self.center = np.array([x - 8, y - 8])
         self.number = index # 1:power 2:speed 3:heart 4:invincibility
-        self.delay = 0  # 무슨 용도더라..
+        # self.delay = 0  # 무슨 용도더라..
 
     def getItem(self, char):
-        if -8 < char.center[0] - self.center[0] < 8:
+        if -8 < char.center[0] - self.center[0] < 8:    # abs로 표기해도 상관없.
             if -8 < char.center[1] - self.center[1] < 8:
                 char.effect = time()
                 char.special(self.number)

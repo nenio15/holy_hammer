@@ -6,7 +6,8 @@ class Character:
         self.appearance = '../res/char_right.png'
         self.name = 'midory'
         self.state = 'normal'
-        self.speed = 4
+        self.speed = 3
+        self.highspeed = 6
         self.size = 16 # half_size
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
@@ -18,26 +19,34 @@ class Character:
         self.score = 0
         self.pushB = 0  # 이거 초기화 어디가서함?
         self.effect = 0
+        self.hitted = 0
         # self.item = 0
 
     def checkManager(self, command = None):
         checkTime = time()
 
         # 피격 판정
-        if checkTime > self.damageDelay + 1:
-            if self.state == 'damaged':        
-            # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
+        if checkTime > self.damageDelay + 2:
+            self.hitted = 0
+            if self.state == 'damaged':
+                # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
+                # 이펙트 처리..
                 # get ani(damaged)
                 # 다치면.. 공격판정이 이상해진다. 캐릭터 문제거나, 좀비쪽 문제
                 self.state = 'normal'
+                self.hitted = 1
                 self.life -= 1
                 # self.score -= 100
                 self.damageDelay = checkTime
         
         # 공격
-        if command['punch']:
+        if command['punch']:    # 이거 다음에 move시켜도 됨?(어차피 필요없기도 한데... 흠...)
             self.action()
-        
+
+        # 달리기        
+        if command['dash']:
+            self.dash()
+
         self.move(checkTime, command)
         
 
@@ -86,10 +95,10 @@ class Character:
         elif self.direction == 'right':
             self.appearance = '../res/char_right_punch.png'
 
-    def dash(self, command):
-        self.state = 'dash'
-        self.speed = 7
-        self.pushB += 1
+    def dash(self):
+        self.speed = self.highspeed
+        #self.state = 'dash'
+        #self.pushB += 1
 
     def dodge(self, command):   # 그림 필요
         self.state = 'dodge'
@@ -102,7 +111,8 @@ class Character:
         if index == 1:
             pass
         elif index == 2:
-            self.speed = 8  # dash는 어쩌고?
+            self.speed = 5
+            self.highspeed = 8
         elif index == 3:
             if self.life < 5:
                 self.life += 1
@@ -116,3 +126,5 @@ class Character:
                 self.speed = 3  # back
             elif index == 4:
                 pass # 여기서 효과를...
+
+        return ('yes', self.effect) # 이펙트 네임. 그리고 효과시작시간 반환?
