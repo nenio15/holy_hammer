@@ -5,7 +5,7 @@ class Block:
     def __init__(self, x, y, status):
         # 충돌해서 막히는 판정.. (근데 몬스터는 지나갈거야?)
         self.halfSize = np.array([16, 16])
-        self.shape = Image.open('../res/block32_1.png')
+        self.shape = Image.open('../res/background/back_tool.png')
         if status == '64':
             self.halfSize = np.array([32, 32])
             self.shape = Image.opne('../res/block16_1.png')
@@ -28,6 +28,7 @@ class Block:
 
     def collision(self, character): #충돌했다(이쪽으로 이동을 시도했다. -> 기존의 자리로 되돌린다.(how?))
         # 캐릭터의 구분이 필요?
+        # ... block() 클래스를 많이가 아니라.. 배열로 x,y값만 하고 싶은데 말이야..
         center = np.array([(int)(character.center[0] - self.center[0]), (int)(character.center[1] - self.center[1])])
 
         if character.name != 'ghost':
