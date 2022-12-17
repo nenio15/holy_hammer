@@ -69,7 +69,7 @@ class Stage:
             self.callGhost(enemy_list, self.stage_ghost[self.step])
             self.step += 1
             if self.stage == 3:
-                enemy = Enemy('boss', (120, 0))
+                enemy = Enemy('boss', (120, 80))
                 enemy_list.extend([enemy])
         elif self.step == 1 and progress > 15:
             print('going more..2')
@@ -100,6 +100,10 @@ class Stage:
                 print('next stage')
                 self.step = -1
                 self.clearTime = 0
+                if self.stage > 3:
+                    self.stage = 4
+                    self.step = 5
+                    print('all complete')
                 print(self.stage)
 
             return 10

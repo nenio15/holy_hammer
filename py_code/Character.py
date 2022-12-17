@@ -29,7 +29,7 @@ class Character:
         checkTime = time()
 
         # 피격 판정
-        if checkTime > self.damageDelay + 2:
+        if checkTime > self.damageDelay + 4: # 4초 딜레이
             if self.state == 'damaged':
                 # 다치면.. 공격판정이 이상해진다. 캐릭터 문제거나, 좀비쪽 문제
                 self.state = 'normal'

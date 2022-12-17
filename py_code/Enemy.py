@@ -70,10 +70,18 @@ class Enemy:
         if(self.center[1] < char_center[1]):
             self.position[1] += self.speed
             self.direction = 'down'
+            if self.size == 16:
+                self.shape = Image.open('../res/simple_zombie_right.png')
+            elif self.size == 32:
+                self.shape = Image.open('../res/simple_boss_right.png')
 
         elif(self.center[1] > char_center[1]):
             self.position[1] -= self.speed
             self.direction = 'up'
+            if self.size == 16:
+                self.shape = Image.open('../res/simple_zombie_left.png')
+            elif self.size == 32:
+                self.shape = Image.open('../res/simple_boss_left.png')
 
         if(self.center[0] < char_center[0]):
             self.position[0] += self.speed
@@ -147,7 +155,7 @@ class Enemy:
 
         # x좌표는 28, y좌표는 54 정도가 적정선? 지금의,
         if c.state != 'dodge' and c.invincible != 1: # 회피처리
-            if abs(center_col[0]) < 12 and abs(center_col[1]) < 24:
+            if abs(center_col[0]) < (self.size - 4) and abs(center_col[1]) < (self.size + 8):
                 return 'hit'
 
     def blinkBody(self, start_time, replace = 0.5, alpha = 0.7):
