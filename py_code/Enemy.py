@@ -22,6 +22,11 @@ class Enemy:
             self.size = 8
             self.speed = 2      # 3으로 할거면 달리기가 필요..
             self.health = 1
+        elif typee == 'boss':
+            self.shape = Image.open('../res/simple_boss_right.png')
+            self.size = 32
+            self.width = 32
+            self.health = 150
 
         self.state = 'alive'
         self.position = np.array([(spawn_position[0] - self.size), (spawn_position[1] - self.size)])
@@ -57,7 +62,7 @@ class Enemy:
     def move(self, char_center):
         # 3 > speed: speed += 0.1 (점점 되돌아오기...)
         self.frame += 1
-        if self.frame < 2 and self.name != 'ghost': # zombie의 속도를 늦추기 위함
+        if self.frame < 2 and self.name != 'ghost': # zombie의 속도를 늦추기
             return
 
         self.frame = 0
@@ -75,12 +80,16 @@ class Enemy:
             self.direction = 'right'
             if self.size == 16:
                 self.shape = Image.open('../res/simple_zombie_right.png')
+            elif self.size == 32:
+                self.shape = Image.open('../res/simple_boss_right.png')
 
         elif(self.center[0] > char_center[0]):
             self.position[0] -= self.speed
             self.direction = 'left'
             if self.size == 16:
                 self.shape = Image.open('../res/simple_zombie_left.png')
+            elif self.size == 32:
+                self.shape = Image.open('../res/simple_boss_left.png')
             # print(self.position[0])
 
         if self.name == 'zombie':
@@ -109,7 +118,7 @@ class Enemy:
                 elif self.size == 8:
                     character.score += 50
                 else:
-                    character.score += 5000
+                    character.score += 10000
 
 
     def overlapCharacter(self, ego_center, c):
@@ -137,7 +146,7 @@ class Enemy:
                     return 'damaged'
 
         # x좌표는 28, y좌표는 54 정도가 적정선? 지금의,
-        if c.state != 'dodge': # 회피처리
+        if c.state != 'dodge' and c.invincible != 1: # 회피처리
             if abs(center_col[0]) < 12 and abs(center_col[1]) < 24:
                 return 'hit'
 

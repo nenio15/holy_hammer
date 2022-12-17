@@ -16,16 +16,16 @@ class Stage:
         self.stage_ghost = [1, 2, 0, 0]
 
         if index == 1:
-            self.stage_zombie = [5, 10, 11, 23]
-            self.stage_ghost = [1, 2, 0, 0]
+            self.stage_zombie = [5, 10, 8, 10]
+            self.stage_ghost = [1, 2, 0, 4]
             self.background = Image.open('../res/background/background_1.png')  # 초기 정의 필요
         elif index == 2:
-            self.stage_zombie = [4, 8, 4, 0]
-            self.stage_ghost = [2, 6, 8, 0]
+            self.stage_zombie = [4, 8, 4, 5]
+            self.stage_ghost = [2, 6, 8, 1]
             self.background = Image.open('../res/background/background_2.png')
         else:
-            self.stage_zombie = [4, 4]
-            self.stage_ghost = [0, 2]
+            self.stage_zombie = [4, 8, 6, 6]
+            self.stage_ghost = [0, 2, 4, 4]
             self.background = Image.open('../res/background/background_3.png')
 
     # 스테이지를 바꾸는 애니메이션도 있어야죠..? ( 언제 호출할지는 main의 함수를 따로 둘겁니다만..)
@@ -46,10 +46,12 @@ class Stage:
                         (150, 60), (180, 60), (210, 60),
                         (0, 150), (30, 150), (60, 150),
                         (120, 180), (150, 180), (180, 180)]
-            #block_list = [Block(30, 30, '32'), Block(60, 30, '32'), Block(90, 30, '32'),
-            #        Block(150, 60, '32'), Block(180, 60, '32'), Block(210, 60, '32'),
-            #        Block(0, 150, '32'), Block(30, 150, '32'), Block(60, 150, '32'),
-            #        Block(120, 180, '32'), Block(150, 180, '32'), Block(180, 180, '32')]
+        else:
+            self.background = Image.open('../res/background/background_3.png')
+            block_list = [(60, 30), (90, 30), (120, 30),
+                        (180, 60), (180, 90), (180, 120),
+                        (30, 90), (30, 120), (30, 150),
+                        (90 ,180), (120, 180), (150, 180)]
 
         return block_list
 
@@ -66,19 +68,32 @@ class Stage:
             self.callZombie(enemy_list, self.stage_zombie[self.step])
             self.callGhost(enemy_list, self.stage_ghost[self.step])
             self.step += 1
+            if self.stage == 3:
+                enemy = Enemy('boss', (120, 0))
+                enemy_list.extend([enemy])
         elif self.step == 1 and progress > 15:
             print('going more..2')
             self.callZombie(enemy_list, self.stage_zombie[self.step])
             self.callGhost(enemy_list, self.stage_ghost[self.step])
             self.step += 1
         elif self.step == 2 and progress > 20:
+            print('getter..3')
+            self.callZombie(enemy_list, self.stage_zombie[self.step])
+            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.step += 1
+        elif self.step == 3 and progress > 30:
+            print('final..4')
+            self.callZombie(enemy_list, self.stage_zombie[self.step])
+            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.step += 1
+        elif self.step == 4 and progress > 30:
             # 적이 전부 죽어야 다음 스테이지로..
             if len(enemy_list) < 1:
                 print('zero end')
                 self.stage += 1
                 self.step += 1
                 self.clearTime = time()
-        elif self.step == 3:
+        elif self.step == 5:
             #print('go')
             if time() - self.clearTime > 5:
                 self.setTime = time()
@@ -129,6 +144,6 @@ class Item:
     def getItem(self, char):
         if abs(char.center[0] - self.center[0]) < 10:
             if abs(char.center[1] - self.center[1]) < 10:
-                char.effect = time()
+                # char.effect = time()
                 char.special(self.number)
                 self.state = 'get'

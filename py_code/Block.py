@@ -3,10 +3,9 @@ from PIL import Image
 
 class Block:
     def __init__(self, x, y, status):
-        # 충돌해서 막히는 판정.. (근데 몬스터는 지나갈거야?)
         self.halfSize = np.array([16, 16])
         self.shape = Image.open('../res/background/back_tool.png')
-        if status == '64':
+        if status == '64':  # 안 쓰임. 폐기
             self.halfSize = np.array([32, 32])
             self.shape = Image.opne('../res/block16_1.png')
 
