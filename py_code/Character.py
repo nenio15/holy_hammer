@@ -6,6 +6,7 @@ class Character:
         self.appearance = '../res/char_right.png'
         self.name = 'midory'
         self.state = 'normal'
+        self.power = 1
         self.speed = 3
         self.highspeed = 6
         self.size = 16 # half_size
@@ -19,6 +20,7 @@ class Character:
         self.score = 0
         self.pushB = 0  # 이거 초기화 어디가서함?
         self.effect = 0
+        self.invisibe = 0
         self.hitted = 0
         # self.item = 0
 
@@ -27,7 +29,6 @@ class Character:
 
         # 피격 판정
         if checkTime > self.damageDelay + 2:
-            self.hitted = 0
             if self.state == 'damaged':
                 # 여기서 다친거, 다치면 밀리거나, 캐릭터가 껌벅껌벅 거리거나 해야하는데, 그건 문제가..
                 # 이펙트 처리..
@@ -36,8 +37,10 @@ class Character:
                 self.state = 'normal'
                 self.hitted = 1
                 self.life -= 1
-                # self.score -= 100
+                self.score -= 100
                 self.damageDelay = checkTime
+            else:
+                self.hitted = 0 #..?
         
         # 공격
         if command['punch']:    # 이거 다음에 move시켜도 됨?(어차피 필요없기도 한데... 흠...)
@@ -100,7 +103,7 @@ class Character:
         #self.state = 'dash'
         #self.pushB += 1
 
-    def dodge(self, command):   # 그림 필요
+    def dodge(self, command):   # 폐기
         self.state = 'dodge'
         self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
         # 프레임으로 할당할거면, 달리, 대충 여기다가 애니하나 넣어야..
@@ -108,23 +111,35 @@ class Character:
         self.state = 'normal'
         
     def special(self, index): # 1:power 2:speed 3:heart 4:invisibility
-        if index == 1:
-            pass
-        elif index == 2:
-            self.speed = 5
-            self.highspeed = 8
-        elif index == 3:
-            if self.life < 5:
-                self.life += 1
-        elif index == 4:
-            self.effect = 10 # 특수상태를 어찌 표현하나요?
+        if self.effect == 0: # 지닌 아이템이 있는 경우 초기화
+            self.power = 1
+            self.speed = 3
+            self.highspeed = 6
+            self.invisibe = 0
 
-        if time() > self.effect + 15: # 효과 종료시키기
+        if time() > self.effect: # 처음 세팅
+            self.effect = time()
+            if index == 1:      # power
+                self.power = 2
+            elif index == 2:    # speed
+                self.speed = 5
+                self.highspeed = 8
+            elif index == 3:    # heart
+                if self.life < 5:
+                    self.life += 1
+            elif index == 4:    # invisibility
+                self.invisibe = 1
+        
+        elif time() < self.effect + 15: # 지속 시간 동안, 효과 보이기
+        
+            pass    # 각 버프 이펙트 추가..
+
+        elif time() > self.effect + 15: # 효과 종료
             if index == 1:
-                pass
+                self.power = 1
             elif index == 2:
                 self.speed = 3  # back
             elif index == 4:
-                pass # 여기서 효과를...
-
+                self.invisibe = 0
+                
         return ('yes', self.effect) # 이펙트 네임. 그리고 효과시작시간 반환?

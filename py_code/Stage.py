@@ -18,23 +18,30 @@ class Stage:
         if index == 1:
             self.stage_zombie = [5, 10, 11, 23]
             self.stage_ghost = [1, 2, 0, 0]
-            self.background = Image.open('../res/background/background_1.png')
-        else:
+            self.background = Image.open('../res/background/background_1.png')  # 초기 정의 필요
+        elif index == 2:
             self.stage_zombie = [4, 8, 4, 0]
             self.stage_ghost = [2, 6, 8, 0]
             self.background = Image.open('../res/background/background_2.png')
+        else:
+            self.stage_zombie = [4, 4]
+            self.stage_ghost = [0, 2]
+            self.background = Image.open('../res/background/background_3.png')
 
     # 스테이지를 바꾸는 애니메이션도 있어야죠..? ( 언제 호출할지는 main의 함수를 따로 둘겁니다만..)
     def showStage(self):
+        block_list = [()]
         if self.stage == 1:
             # 배경그림으로 만들것.
             # + x,y좌표가 center가 아닐수도 있음에 주의
-            block_list = [Block(60, 30, '32'), Block(30, 60, '32'), Block(60, 60, '32'),
-                    Block(150, 30, '32'), Block(180, 60, '32'), Block(150, 60, '32'),
-                    Block(30, 150, '32'), Block(60, 180, '32'), Block(60, 150, '32'),
-                    Block(180, 150, '32'), Block(150, 180, '32'), Block(150, 150, '32')]
+            self.background = Image.open('../res/background/background_1.png')
+            block_list = [(60, 30), (30, 60), (60, 60),
+                    (150, 30), (180, 60), (150, 60),
+                    (30, 150), (60, 180), (60, 150),
+                    (180, 150), (150, 180), (150, 150)]
             
         elif self.stage == 2:
+            self.background = Image.open('../res/background/background_2.png')
             block_list = [(30, 30), (60, 30), (90, 30),
                         (150, 60), (180, 60), (210, 60),
                         (0, 150), (30, 150), (60, 150),
@@ -72,9 +79,9 @@ class Stage:
                 self.step += 1
                 self.clearTime = time()
         elif self.step == 3:
-            print('go')
+            #print('go')
             if time() - self.clearTime > 5:
-                self.background = Image.open('../res/background/background_2.png')
+                self.setTime = time()
                 print('next stage')
                 self.step = -1
                 self.clearTime = 0
@@ -106,7 +113,7 @@ class Stage:
 class Item:
     def __init__(self, x, y, index):
         self.position = np.array([x, y])
-        self.center = np.array([x - 8, y - 8])
+        self.center = np.array([x + 8, y + 8])
         self.number = index # 1:power 2:speed 3:heart 4:invincibility
         self.state = 'field'
         # self.delay = 0  # 무슨 용도더라..

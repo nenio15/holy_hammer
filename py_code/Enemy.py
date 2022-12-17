@@ -2,7 +2,7 @@ import numpy as np
 from time import time
 import random
 from PIL import Image
-from Stage import Item
+#from Stage import Item
 
 class Enemy:
     def __init__(self, typee, spawn_position):
@@ -11,7 +11,7 @@ class Enemy:
         self.width = 16
         self.name = typee
         self.speed = 1
-        self.hit = 0
+        #self.hit = 0
         self.health = 7
         self.swing = random.randint(-4, 5)  # -5 ~ 5
         self.frame = 0
@@ -57,7 +57,7 @@ class Enemy:
     def move(self, char_center):
         # 3 > speed: speed += 0.1 (점점 되돌아오기...)
         self.frame += 1
-        if self.frame < 2 and self.name != 'ghost':
+        if self.frame < 2 and self.name != 'ghost': # zombie의 속도를 늦추기 위함
             return
 
         self.frame = 0
@@ -99,31 +99,17 @@ class Enemy:
 
         # 피격
         if collision == 'damaged':
-            self.blinkBody(time(), 0.3)
-            self.hit += 1       # 이거 그대로 3 올라가는데요?
-            #collision = 'none'
-            if self.hit > self.health:
+            self.blinkBody(time(), 0.3)  # 중복되어서 들어감
+            self.health -= character.power #self.hit += character.power      # punch가 지속되는 동안 올라감. 그래서 health를 크게 줬음
+            if self.health <= 0:
                 self.state = 'dead'
                 
-                # 1.드롭확률이랑, 아이템 확률을 달리한다. 2.각 아이템의 드롭확률을 조정한다.
-                # 이때 한 아이템만 드롭해야한다. 이게 문제
-                get = random.random()
-                if get < 0.3:
-                    if random.random() < 0.3:
-                        item_list.extend([Item(self.position[0], self.position[1], 1)])
-                    elif random.random() < 0.3:
-                        item_list.extend([Item(self.position[0], self.position[1], 2)])
-                    elif random.random() < 0.2:
-                        item_list.extend([Item(self.position[0], self.position[1], 3)])
-                    elif random.random() < 0.1:
-                        item_list.extend([Item(self.position[0], self.position[1], 4)])
-                    else: # 베이스는 스피드로..
-                        item_list.extend([Item(self.position[0], self.position[1], 2)])
-
                 if self.size == 16: 
                     character.score += 100
-                if self.size == 8:
+                elif self.size == 8:
                     character.score += 50
+                else:
+                    character.score += 5000
 
 
     def overlapCharacter(self, ego_center, c):
