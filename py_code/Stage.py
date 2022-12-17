@@ -5,13 +5,15 @@ from Enemy import Enemy
 from Block import Block
 
 class Stage:
-    def __init__(self, index):
+    def __init__(self, index = 0):
         self.setTime = time()
-        self.stage = 1
+        self.clearTime = 0
+        self.stage = index
         self.step = -1
         # 한 번에 50마리는 무리. 30마리가 최대?
         self.stage_list = [5, 10, 11, 23] #이걸로 숫자 조정하자.. #2차원배열이어야..? 아니면 스테이지 바뀌면 거시기
-        
+        self.stage_ghost = [1, 2, 0, 0]
+
         # ..? 안쓸듯
         if index == 1:
             self.zomCnt = 10
@@ -30,34 +32,49 @@ class Stage:
                     Block(30, 180, '32'), Block(60, 210, '32'), Block(60, 180, '32'),
                     Block(210, 180, '32'), Block(180, 210, '32'), Block(180, 180, '32')]
             
+            #my_draw.text((80, 80), "STAGE 1 start!!", fill="#FFFFFF", stroke_fill="#FF0000")
+
             print('stage 1 start!!')
-            return block_list
+            
         elif self.stage == 2:
-            block_list = []
+            block_list = [Block(30, 30, '32')]
 
-            return block_list
-
+        return block_list
 
     # 항상 main에서 갱신
     def startStage(self, enemy_list):
         progress = time() - self.setTime
         # step을 index, progress를 원소로 지녀서 관리..?(stage_list처럼)
-        if self.step == -1 and progress > 0:
+        if self.step == -1 and progress < 5:            
+            return self.stage     # 기본값은..?
+        elif self.step == -1:     # title 넘기기
             self.step += 1
-            return True     # 기본값은..?
-        elif self.step == 0 and progress > 3 :
+        elif self.step == 0 and progress > 5 :
             print('call...1')
             self.callZombie(enemy_list, self.stage_list[self.step])
+            self.callGhost(enemy_list, self.stage_ghost[self.step])
             self.step += 1
         elif self.step == 1 and progress > 15:
             print('going more..2')
             self.callZombie(enemy_list, self.stage_list[self.step])
+            self.callGhost(enemy_list, self.stage_ghost[self.step])
             self.step += 1
-        elif self.step == 2 and progress > 30:
-            pass    # 적이 전부 죽어야 다음 스테이지로..
-            #if enemy_list.count < 1: # 이게 아냐..
-            #    print('zero end')
-            #    self.stage = 2
+        elif self.step == 2 and progress > 20:
+            # 적이 전부 죽어야 다음 스테이지로..
+            if len(enemy_list) < 1:
+                print('zero end')
+                self.stage += 1
+                self.step += 1
+                self.clearTime = time()
+        elif self.step == 3:
+            print('go')
+            if time() - self.clearTime > 5:
+                print('next stage')
+                self.step = -1
+                self.clearTime = 0
+                print(self.stage)
+
+            return 10
 
         return False
 
@@ -72,6 +89,13 @@ class Stage:
             # else:
             #    i -= 1
             #    print('reroll')
+
+    def callGhost(self, enemy_list, cnt):
+        for i in range(cnt):
+            pos = np.array([random.randint(-32, 272), random.randint(-32, 272)])
+            enemy = Enemy('ghost', (random.randint(-32, 272), random.randint(-32, 272)))
+            enemy_list.extend([enemy])
+            
 
 class Item:
     def __init__(self, x, y, index):

@@ -69,7 +69,7 @@ def main():
     space = 0
     joystick = Joystick()
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
-    background = Image.open("background1.png")
+    background = Image.open('../res/background/background_1.png')
     my_draw = ImageDraw.Draw(my_image)
     # # 배경화면 초기화?
     my_draw.rectangle((space, space, joystick.width + space, joystick.height + space), fill=(255, 0, 0, 100))
@@ -80,18 +80,16 @@ def main():
     my_image.paste(background, (space, space))
     # hitted = 0 # 이걸로 될려나..
     
-    rand_x = random.randint(-32, 240)
-    rand_y = random.randint(-32, 240)
-    enemy_1 = Enemy('ghost', (rand_x, rand_y))
-    enemy_list = [enemy_1]
-    block_list = []
-    itme_list = []
+    #rand_x = random.randint(-32, 240)
+    #rand_y = random.randint(-32, 240)
+    #enemy_1 = Enemy('ghost', (rand_x, rand_y))
     stage = Stage(1)    #1
-
+    enemy_list = []
+    block_list = stage.showStage()
+    itme_list = []
+    
     while True:
-        if stage.startStage(enemy_list):    # 스테이지 처음에만 실행
-            block_list = stage.showStage()
-        # ?
+        
 
         command = {'move': False, 'punch': False, 'dash': False,'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         # this can move to other def?
@@ -128,8 +126,18 @@ def main():
         if not my_character.hitted:
             my_image.paste(my_img, tuple(my_character.position), my_img)
         else:
-            my_img_trans = blinkBody(my_img, my_character.damageDelay)
+            my_img_trans = blinkBody(my_img, my_character.damageDelay, 0.2, 0.7)
             my_image.paste(my_img_trans, tuple(my_character.position), my_img_trans)
+
+        s = stage.startStage(enemy_list)
+        if s != 0:
+            block_list = stage.showStage()  # d여러번 호출이라..
+            #print('show title..')
+            if s < 10:
+                my_draw.text((80, 80), 'STAGE ' + str(s), fill="#FFFFFF", stroke_fill="#FF0000")
+            elif s == 10:
+                my_draw.text((80, 80), 'CLEAR!!!', fill='#FFFFFF')
+                background = Image.open('../res/background/background_2.png')
 
         #좌표는 이미지만 넣으면 180도 돌릴필요 엄서요..
         joystick.disp.image(my_image, 180, space, space)

@@ -1,4 +1,5 @@
 import numpy as np
+from time import time
 import random
 from PIL import Image
 
@@ -10,13 +11,16 @@ class Enemy:
         self.name = typee
         self.speed = 1
         self.hit = 0
+        self.health = 7
         self.swing = random.randint(-4, 5)  # -5 ~ 5
         self.frame = 0
+
 
         if typee == 'ghost':    # 변칙적이진 않다만, 플레이어 속도를 쫓아온다는 위협성..
             self.shape = Image.open('../res/simple_ghost.png')
             self.size = 8
             self.speed = 2      # 3으로 할거면 달리기가 필요..
+            self.health = 1
 
         self.state = 'alive'
         self.position = np.array([(spawn_position[0] - self.size), (spawn_position[1] - self.size)])
@@ -94,10 +98,10 @@ class Enemy:
 
         # 피격
         if collision == 'damaged':
-            print(self.hit)
+            self.blinkBody(time(), 0.3)
             self.hit += 1       # 이거 그대로 3 올라가는데요?
-            collision = 'none'
-            if self.hit > 2:
+            #collision = 'none'
+            if self.hit > self.health:
                 self.state = 'dead'
                 # 시체는 없을거야. 근데 뿅하고 사라지겠네
                 if self.size == 16: 
@@ -134,3 +138,14 @@ class Enemy:
         if c.state != 'dodge': # 회피처리
             if abs(center_col[0]) < 12 and abs(center_col[1]) < 24:
                 return 'hit'
+
+    def blinkBody(self, start_time, replace = 0.5, alpha = 0.7):
+        s = replace
+        if time() > start_time + replace:
+            s = s + 0.5
+
+        if s == replace:
+            img_trans = Image.new("RGBA", self.shape.size)
+            img_trans = Image.blend(img_trans, self.shape, alpha)
+            self.shape = img_trans
+        
