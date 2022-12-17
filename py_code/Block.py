@@ -26,10 +26,10 @@ class Block:
 
         character.center = np.array([(int)(character.position[0] + character.size), (int)(character.position[1] + character.size)])
 
-    def collision(self, character): #충돌했다(이쪽으로 이동을 시도했다. -> 기존의 자리로 되돌린다.(how?))
-        # 캐릭터의 구분이 필요?
+    def collision(self, position, character):
         # ... block() 클래스를 많이가 아니라.. 배열로 x,y값만 하고 싶은데 말이야..
-        center = np.array([(int)(character.center[0] - self.center[0]), (int)(character.center[1] - self.center[1])])
+        # center = np.array([(int)(character.center[0] - self.center[0]), (int)(character.center[1] - self.center[1])])
+        center = np.array([(int)(character.center[0] - position[0] + self.halfSize[0]), (int)(character.center[1] - position[1] + self.halfSize[1])])
 
         if character.name != 'ghost':
             # 들어왔다의 인식

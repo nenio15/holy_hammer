@@ -69,6 +69,7 @@ def main():
     space = 0
     joystick = Joystick()
     stage = Stage(2)    #1 is start, #0 is title..?
+    blockManager = Block(120, 120, '32')
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     #background = Image.open('../res/background/background_1.png')
     my_draw = ImageDraw.Draw(my_image)
@@ -86,21 +87,26 @@ def main():
     item_list = [Item(50, 100, 1), Item(120, 180, 2)]
     
     while True:
+        if my_character.life < 1: # game over..
+            print('life zero')
+            return
+
         command = {'move': False, 'punch': False, 'dash': False,'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         command = playerCommand(command, joystick, my_character)
         my_character.checkManager(command) #my_character.move(command)
         my_img = Image.open(my_character.appearance)
 
-
-        block_list[0].mapLimit(my_character)
-        #block.collision(my_character)
+        #block_list[0].mapLimit(my_character)    # ... need to change
+        blockManager.mapLimit(my_character)
 
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
         my_image.paste(stage.background, (space, space))
         
         for block in block_list:
-            my_image.paste(block.shape, tuple(block.position), block.shape) # 벽 콜리더 시각화
-            block.collision(my_character)
+            my_image.paste(blockManager.shape, tuple(block), blockManager.shape) # 벽 콜리더 시각화
+            print(block)
+            print(block[0], block[1])
+            blockManager.collision(block, my_character)
 
         for item in item_list:
             if item.state != 'get':
@@ -113,9 +119,9 @@ def main():
             if enemy.state != 'dead':
                 enemy.move(my_character.center)
                 for block in block_list:
-                    block.collision(enemy)
+                    blockManager.collision(block, my_character)
 
-                enemy.collision_check(my_character)
+                enemy.collision_check(my_character, item_list)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
             else:
                 # 이거... 다른 list에 영향을 줌(시각적으로)(귀찮아)
@@ -127,10 +133,10 @@ def main():
 
         s = stage.startStage(enemy_list)
         if s != 0:
-            block_list = stage.showStage()  # d여러번 호출이라..
+            block_list = stage.showStage()  # d여러번 호출이라.. 따로 처리해? 말어?
             #print('show title..')
             if s < 10:
-                my_draw.text((100, 80), 'STAGE ' + str(s), fill="#FFFFFF", stroke_fill="#FF0000")
+                my_draw.text((100, 80), 'STAGE ' + str(s), fill="#000000", stroke_fill="#FFFFFF")   # text는 따로인가?
             elif s == 10:
                 my_draw.text((100, 80), 'CLEAR!!!', fill='#FFFFFF')
                 

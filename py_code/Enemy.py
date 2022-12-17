@@ -2,6 +2,7 @@ import numpy as np
 from time import time
 import random
 from PIL import Image
+from Stage import Item
 
 class Enemy:
     def __init__(self, typee, spawn_position):
@@ -88,7 +89,7 @@ class Enemy:
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
 
 
-    def collision_check(self, character):   # obj도 추가할 것
+    def collision_check(self, character, item_list):   # obj도 추가할 것
         
         collision = self.overlapCharacter(self.center, character)
 
@@ -103,7 +104,22 @@ class Enemy:
             #collision = 'none'
             if self.hit > self.health:
                 self.state = 'dead'
-                # 시체는 없을거야. 근데 뿅하고 사라지겠네
+                
+                # 1.드롭확률이랑, 아이템 확률을 달리한다. 2.각 아이템의 드롭확률을 조정한다.
+                # 이때 한 아이템만 드롭해야한다. 이게 문제
+                get = random.random()
+                if get < 0.3:
+                    if random.random() < 0.3:
+                        item_list.extend([Item(self.position[0], self.position[1], 1)])
+                    elif random.random() < 0.3:
+                        item_list.extend([Item(self.position[0], self.position[1], 2)])
+                    elif random.random() < 0.2:
+                        item_list.extend([Item(self.position[0], self.position[1], 3)])
+                    elif random.random() < 0.1:
+                        item_list.extend([Item(self.position[0], self.position[1], 4)])
+                    else: # 베이스는 스피드로..
+                        item_list.extend([Item(self.position[0], self.position[1], 2)])
+
                 if self.size == 16: 
                     character.score += 100
                 if self.size == 8:
