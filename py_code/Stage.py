@@ -17,15 +17,12 @@ class Stage:
         if index == 1:
             self.stage_zombie = [5, 10, 8, 10]
             self.stage_ghost = [1, 2, 0, 4]
-            #self.background = Image.open('../res/background/background_1.png')  # 초기 정의 필요
         elif index == 2:
             self.stage_zombie = [4, 8, 4, 5]
             self.stage_ghost = [2, 6, 8, 1]
-            #self.background = Image.open('../res/background/background_2.png')
         else:
             self.stage_zombie = [4, 8, 6, 6]
-            self.stage_ghost = [0, 2, 4, 4]
-            #self.background = Image.open('../res/background/background_3.png')
+            self.stage_ghost = [0, 2, 3, 4]
 
     def showStage(self):
 
