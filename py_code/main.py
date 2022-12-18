@@ -68,6 +68,7 @@ def gameRestart(char, stage, joystick):
     char.life = 5
     char.position = np.array([(int)(joystick.width / 2 - char.size), (int)(joystick.height / 2 - char.size)])
     char.score = 0
+    char.effect -= 10
 
     stage.stage = 1
     stage.step = -1
