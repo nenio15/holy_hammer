@@ -43,6 +43,8 @@ class Character:
         # 달리기        
         if command['dash']:
             self.dash()
+        else:
+            self.speed = self.highspeed - 3
 
         self.move(checkTime, command)
         
@@ -53,6 +55,7 @@ class Character:
                 self.appearance = '../res/char_' + self.direction + ".png"
                 
         elif curTime > self.delay + 0.3:
+            self.state = 'move'
 
             if command['up_pressed']:
                 self.position[1] -= self.speed

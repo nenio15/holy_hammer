@@ -69,6 +69,7 @@ def gameRestart(char, stage, joystick):
     char.position = np.array([(int)(joystick.width / 2 - char.size), (int)(joystick.height / 2 - char.size)])
     char.score = 0
     char.effect -= 10
+    char.state = 'noraml'
 
     stage.stage = 1
     stage.step = -1
@@ -112,9 +113,9 @@ def main():
             my_draw.text((60, 180), "PRESS 'A' For restart...", fill='#000000')
 
             if not joystick.button_A.value: # restart 전부 다 초기화
-                gameRestart(my_character, stage, joystick)
                 enemy_list.clear()
                 item_list.clear()
+                gameRestart(my_character, stage, joystick)
 
             joystick.disp.image(my_image)
             continue    # skip
@@ -177,9 +178,9 @@ def main():
                     my_draw.text((60, 180), "PRESS 'B' For restart...", fill='#000000')
 
                     if not joystick.button_B.value: # restart 전부 다 초기화
-                        gameRestart(my_character, stage, joystick)
                         enemy_list.clear()
                         item_list.clear()
+                        gameRestart(my_character, stage, joystick)
                 
         my_draw.text((0, 0), "score "+ str(my_character.score), fill="#FFFFFF")
         my_draw.text((180, 0), "LIFE : "+str(my_character.life), fill="#FFFFFF")
