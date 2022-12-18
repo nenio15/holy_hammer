@@ -11,11 +11,9 @@ class Enemy:
         self.width = 16
         self.name = typee
         self.speed = 1
-        #self.hit = 0
         self.health = 7
-        self.swing = random.randint(-4, 5)  # -5 ~ 5
+        self.swing = random.randint(-8, 9)  # -9 ~ 9
         self.frame = 0
-
 
         if typee == 'ghost':    # 변칙적이진 않다만, 플레이어 속도를 쫓아온다는 위협성..
             self.shape = Image.open('../res/simple_ghost.png')
@@ -36,33 +34,30 @@ class Enemy:
     def movSwing(self):
         if self.swing > 0:
             self.swing += 1
-            if self.direction == 'right' or 'left':
-                self.position[1] += 1
-            else:
-                self.position[0] += 1
+            if self.direction == 'right' or self.direction == 'left':
+                self.position[1] += 2
+            else:   # up or down
+                self.position[0] += 2
 
-            if self.swing > 4:
+            if self.swing > 8:
                 self.swing = 0
 
         elif self.swing < 0:
             self.swing -= 1
-            if self.direction == 'right' or 'left':
-                self.position[1] -= 1
-            else:
-                self.position[0] -= 1
+            if self.direction == 'right' or self.direction == 'left':
+                self.position[1] -= 2
+            else:   # up or down
+                self.position[0] -= 2
 
-            if self.swing < -4:
+            if self.swing < -8:
                 self.swing = 0
                 
         else:
-            self.swing = random.randint(-4, 5)
+            self.swing = random.randint(-8, 9)
 
-
-    # 얘는 거리 비례에서 speed를 약간 조절할까요..? ex) speed / (distance)
     def move(self, char_center):
-        # 3 > speed: speed += 0.1 (점점 되돌아오기...)
         self.frame += 1
-        if self.frame < 2 and self.name != 'ghost': # zombie의 속도를 늦추기
+        if self.frame < 2 and self.name != 'ghost': # zombie의 속도를 늦추기(float는 안되서..)
             return
 
         self.frame = 0
@@ -105,18 +100,17 @@ class Enemy:
 
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
 
-
-    def collision_check(self, character, item_list):   # obj도 추가할 것
+    def collision_check(self, character):
         
         collision = self.overlapCharacter(self.center, character)
 
         # 캐릭터 공격
         if collision == 'hit':
-            character.state = 'damaged' #여기서 함수를 호출해도 되는데 그건 조금?
+            character.state = 'damaged'
 
         # 피격
         if collision == 'damaged':
-            self.blinkBody(time(), 0.3)  # 중복되어서 들어감
+            self.blinkBody(time())  # 중복되어서 들어감
             self.health -= character.power #self.hit += character.power      # punch가 지속되는 동안 올라감. 그래서 health를 크게 줬음
             if self.health <= 0:
                 self.state = 'dead'
@@ -128,15 +122,13 @@ class Enemy:
                 else:
                     character.score += 10000
 
-
     def overlapCharacter(self, ego_center, c):
         # 새 충돌에서 방향받아서, 그 방향의 망치 범위일때가 필요한 거야
         center_col = np.array([(ego_center[0] - c.center[0]), (ego_center[1] - c.center[1])])
         
-        # 렉이 걸릴 수준이면, 판정이 인식이 안 된다..
+        # 렉이 걸릴 수준이면, 판정이 인식이 안 된다
         if c.state == 'punch': # ddd
             if c.direction == 'up':
-                # up이 가장 이상해..
                 if 0 > center_col[1] > -self.size - 24 and abs(center_col[0]) < 16:
                     return 'damaged'
 
@@ -144,7 +136,6 @@ class Enemy:
                 if -8 < center_col[1] < self.size + 24 and abs(center_col[0]) < 16:
                     return 'damaged'
                     
-            # 왼쪽만 머가 이상함...
             if c.direction == 'left':
                 if 24 > center_col[0] > -self.width - 16 and abs(center_col[1]) < 24:
                     return 'damaged'
@@ -153,12 +144,12 @@ class Enemy:
                 if 0 < center_col[0] < self.width + 32 and abs(center_col[1]) < 24:
                     return 'damaged'
 
-        # x좌표는 28, y좌표는 54 정도가 적정선? 지금의,
-        if c.state != 'dodge' and c.invincible != 1: # 회피처리
+        # x좌표는 12, y좌표는 24 정도가 적정선
+        if c.invincible != 1: # 회피처리    # c.state != 'dodge' (폐기)
             if abs(center_col[0]) < (self.size - 4) and abs(center_col[1]) < (self.size + 8):
                 return 'hit'
 
-    def blinkBody(self, start_time, replace = 0.5, alpha = 0.7):
+    def blinkBody(self, start_time, replace = 0.3, alpha = 0.7):
         s = replace
         if time() > start_time + replace:
             s = s + 0.5

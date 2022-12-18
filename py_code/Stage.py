@@ -11,10 +11,8 @@ class Stage:
         self.clearTime = 0
         self.stage = index
         self.step = -1
-        # 한 번에 50마리는 무리. 30마리가 최대?
-        self.stage_list = [5, 10, 11, 23] #이걸로 숫자 조정하자.. #2차원배열이어야..? 아니면 스테이지 바뀌면 거시기
-        self.stage_ghost = [1, 2, 0, 0]
 
+        # 한 번에 50마리는 무리. 30마리가 최대?
         if index == 1:
             self.stage_zombie = [5, 10, 8, 10]
             self.stage_ghost = [1, 2, 0, 4]
@@ -28,12 +26,8 @@ class Stage:
             self.stage_ghost = [0, 2, 4, 4]
             self.background = Image.open('../res/background/background_3.png')
 
-    # 스테이지를 바꾸는 애니메이션도 있어야죠..? ( 언제 호출할지는 main의 함수를 따로 둘겁니다만..)
     def showStage(self):
-        block_list = [()]
         if self.stage == 1:
-            # 배경그림으로 만들것.
-            # + x,y좌표가 center가 아닐수도 있음에 주의
             self.background = Image.open('../res/background/background_1.png')
             block_list = [(60, 30), (30, 60), (60, 60),
                     (150, 30), (180, 60), (150, 60),
@@ -56,38 +50,38 @@ class Stage:
         return block_list
 
     # 항상 main에서 갱신
-    def startStage(self, enemy_list):
+    def startStage(self, enemy_list, char_pos):
         progress = time() - self.setTime
-        # step을 index, progress를 원소로 지녀서 관리..?(stage_list처럼)
+        # step을 index, progress를 원소로 관리(stage_list처럼)
         if self.step == -1 and progress < 5:            
-            return self.stage     # 기본값은..?
+            return self.stage
         elif self.step == -1:     # title 넘기기
             self.step += 1
         elif self.step == 0 and progress > 5 :
             print('call...1')
-            self.callZombie(enemy_list, self.stage_zombie[self.step])
-            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_zombie[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_ghost[self.step], 'ghost')
             self.step += 1
-            if self.stage == 3:
+            if self.stage == 3:     # summon boss
                 enemy = Enemy('boss', (120, 80))
                 enemy_list.extend([enemy])
         elif self.step == 1 and progress > 15:
             print('going more..2')
-            self.callZombie(enemy_list, self.stage_zombie[self.step])
-            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_zombie[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_ghost[self.step], 'ghost')
             self.step += 1
         elif self.step == 2 and progress > 20:
             print('getter..3')
-            self.callZombie(enemy_list, self.stage_zombie[self.step])
-            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_zombie[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_ghost[self.step], 'ghost')
             self.step += 1
         elif self.step == 3 and progress > 30:
             print('final..4')
-            self.callZombie(enemy_list, self.stage_zombie[self.step])
-            self.callGhost(enemy_list, self.stage_ghost[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_zombie[self.step])
+            self.callEnemy(char_pos, enemy_list, self.stage_ghost[self.step], 'ghost')
             self.step += 1
         elif self.step == 4 and progress > 30:
-            # 적이 전부 죽어야 다음 스테이지로..
+            # 적이 전부 죽어야 다음 스테이지로 이동
             if len(enemy_list) < 1:
                 print('zero end')
                 self.stage += 1
@@ -97,35 +91,36 @@ class Stage:
             #print('go')
             if time() - self.clearTime > 5:
                 self.setTime = time()
-                print('next stage')
+                #print('next stage')
                 self.step = -1
                 self.clearTime = 0
                 if self.stage > 3:
                     self.stage = 4
                     self.step = 5
-                    print('all complete')
-                print(self.stage)
-
+                    #print('all complete')
+                
             return 10
 
         return False
 
-    # 대충.. time을 따로 해서, zom 나오는 수 조정, gho 나오는 수 조정
-    def callZombie(self, enemy_list, cnt):
+    # zom, gho 나오는 수 조정(시간에 따라서)
+    def callEnemy(self, char_pos, enemy_list, cnt = 0, name = 'zombie'):
         for i in range(cnt):
-            # 맵 밖에서 소환..(구현 필요..) 대충 for로 ??
             pos = np.array([random.randint(-32, 272), random.randint(-32, 272)])
-            # if (pos[0] < 0 or pos[0] > 240) and (pos[1] < 0 or pos[1] > 240):
-            enemy = Enemy('zombie', (random.randint(-32, 272), random.randint(-32, 272)))
-            enemy_list.extend([enemy])
-            # else:
-            #    i -= 1
-            #    print('reroll')
+            center = np.array([(pos[0] - char_pos[0]), (pos[1] - char_pos[1])])
 
-    def callGhost(self, enemy_list, cnt):
-        for i in range(cnt):
-            pos = np.array([random.randint(-32, 272), random.randint(-32, 272)])
-            enemy = Enemy('ghost', (random.randint(-32, 272), random.randint(-32, 272)))
+            # 캐릭터와 겹치지 않게끔 소환
+            if -16 < center[0] < 16 and -16 < center[1] < 16:
+                if center[0] > 0:
+                    pos[0] += 30
+                else:
+                    pos[0] -= 30
+                if center[1] > 0:
+                    pos[1] += 30
+                else:
+                    pos[1] -= 30
+                
+            enemy = Enemy(name, pos)
             enemy_list.extend([enemy])
             
 
@@ -135,7 +130,6 @@ class Item:
         self.center = np.array([x + 8, y + 8])
         self.number = index # 1:power 2:speed 3:heart 4:invincibility
         self.state = 'field'
-        # self.delay = 0  # 무슨 용도더라..
         if index == 1:
             self.shape = Image.open('../res/item/item_p.png')
         elif index == 2:
@@ -145,9 +139,8 @@ class Item:
         elif index == 4:
             self.shape = Image.open('../res/item/item_i.png')
 
-    def getItem(self, char):
+    def getItem(self, char):    # 아이템 먹는 판정
         if abs(char.center[0] - self.center[0]) < 10:
             if abs(char.center[1] - self.center[1]) < 10:
-                # char.effect = time()
                 char.special(self.number)
                 self.state = 'get'

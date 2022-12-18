@@ -14,16 +14,13 @@ class Character:
         self.position = np.array([(int)(width/2 - self.size), (int)(height/2 - self.size)])
         self.center = np.array([(self.position[0] + self.size), (self.position[1] + self.size)])
         self.direction = 'right'
-        self.delay = -3 # 폐기..?
-        self.damageDelay = -3
-        self.rolling = -3 # 폐기
+        self.delay = -3         # 공격 후딜
+        self.damageDelay = -3   # 피격 후딜
         self.life = 5
         self.score = 0
-        self.pushB = 0  # 폐기될 데이터
         self.effect = 0
         self.invincible = 0
         self.hitted = 0
-        # self.item = 0
 
     def checkManager(self, command = None):
         checkTime = time()
@@ -31,7 +28,6 @@ class Character:
         # 피격 판정
         if checkTime > self.damageDelay + 4: # 4초 딜레이
             if self.state == 'damaged':
-                # 다치면.. 공격판정이 이상해진다. 캐릭터 문제거나, 좀비쪽 문제
                 self.state = 'normal'
                 self.hitted = 1
                 self.life -= 1
@@ -41,7 +37,7 @@ class Character:
                 self.hitted = 0 #..?
         
         # 공격
-        if command['punch']:    # 이거 다음에 move시켜도 됨?(어차피 필요없기도 한데... 흠...)
+        if command['punch']:
             self.action()
 
         # 달리기        
@@ -50,16 +46,13 @@ class Character:
 
         self.move(checkTime, command)
         
-
-    def move(self, curTime, command = None): # move가 아니라,, 체크인데?
-
+    def move(self, curTime, command = None):
         if command['move'] == False:
             if curTime > self.delay + 0.3: # 액션끝나도 아무것도 안 하면 돌아와야지
                 self.state = 'normal'
                 self.appearance = '../res/char_' + self.direction + ".png"
-
-        elif curTime > self.delay + 0.3: # 여기 뭐 있었는지 아시는분~
-            # self.state = 'move'
+                
+        elif curTime > self.delay + 0.3:
 
             if command['up_pressed']:
                 self.position[1] -= self.speed
@@ -84,9 +77,8 @@ class Character:
             #center update
             self.center = np.array([(int)(self.position[0] + self.size), (int)(self.position[1] + self.size)])
 
-
     def action(self):
-        self.state = 'punch'    # 이걸로..?
+        self.state = 'punch'
         #print(self.direction)
         if self.direction == 'up':
             self.appearance = '../res/char_up_punch.png'
@@ -102,10 +94,10 @@ class Character:
         #self.state = 'dash'
         #self.pushB += 1
 
+    # 사용하지 않음 (애니 넣는게 좋은데, 없음)
     def dodge(self, command):   # 폐기
         self.state = 'dodge'
-        self.speed = 20 # 일단 올려놨는데,,, 프레임이 짧지않음?
-        # 프레임으로 할당할거면, 달리, 대충 여기다가 애니하나 넣어야..
+        self.speed = 20
         self.move(command)
         self.state = 'normal'
         

@@ -35,23 +35,10 @@ def playerCommand(command, joystick, character):
         
     if not joystick.button_B.value:
         command['dash'] = True
-        #command['move'] = True
-        
-    # 애매함. 봉인
-#    if joystick.button_B.value:
-        # pushB 눌린정도. rolling 쿨타임
-        # print(character.state)
-#        if character.state == 'dash' and character.pushB < 100 and time() > character.rolling + 0.7:
-                # print("dodged!!!")
-                # character.dodge(command) # 일단 보류(이미지도 없엉)
-#                character.rolling = time()
-#                command['move'] = False
-#                character.pushB = 0
-#        character.speed = 4
 
     return command
 
-def blinkBody(my_img, start_time, replace = 0.5, alpha = 0.5):
+def blinkBody(my_img, start_time, replace = 0.5, alpha = 0.7):
     s = replace
     if time() > start_time + replace:
         s = s + 0.5
@@ -70,12 +57,10 @@ def dropItem(enemy, item_list):
     if get < 0.3:
         if random.random() < 0.1:
             item_list.extend([Item(enemy.position[0], enemy.position[1], 4)])
-        elif random.random() < 0.2:
-            item_list.extend([Item(enemy.position[0], enemy.position[1], 3)])
+        elif random.random() < 0.35:
+            item_list.extend([Item(enemy.position[0], enemy.position[1], 1)])
         elif random.random() < 0.3:
             item_list.extend([Item(enemy.position[0], enemy.position[1], 2)])
-        elif random.random() < 0.3:
-            item_list.extend([Item(enemy.position[0], enemy.position[1], 1)])
         else: # 베이스는 하트(이지 난이도)
             item_list.extend([Item(enemy.position[0], enemy.position[1], 3)])
 
@@ -91,8 +76,8 @@ def gameRestart(char, stage, joystick):
 def main():
     space = 0
     joystick = Joystick()
-    stage = Stage(3)    #1 is start, #0 is title..? #2, #3 (3 is boss round)
-    blockManager = Block(120, 120, '32')
+    stage = Stage(2)    #1 is start, #2, #3 (3 is boss round)
+    blockManager = Block(16, 16)
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     my_draw = ImageDraw.Draw(my_image)
     # # 배경화면 초기화
@@ -119,11 +104,11 @@ def main():
                 item_list.clear()
 
             joystick.disp.image(my_image)
-            continue  # end this one..(not good?)
+            continue    # skip
 
         command = {'move': False, 'punch': False, 'dash': False,'up_pressed': False, 'down_pressed': False, 'left_pressed': False, 'right_pressed': False}
         command = playerCommand(command, joystick, my_character)
-        my_character.checkManager(command) #my_character.move(command)
+        my_character.checkManager(command)          #my_character.move(command)
         my_img = Image.open(my_character.appearance)
 
         blockManager.mapLimit(my_character)
@@ -136,10 +121,10 @@ def main():
             blockManager.collision(block, my_character)
 
         for item in item_list:
-            if item.state != 'get':
+            if item.state != 'get': # 필드 아이템
                 item.getItem(my_character)
                 my_image.paste(item.shape, tuple(item.position), item.shape)
-            else:
+            else: # 아이템 획득
                 item_list.remove(item)
         
         for enemy in enemy_list:
@@ -148,34 +133,31 @@ def main():
                 for block in block_list:
                     blockManager.collision(block, enemy)
 
-                enemy.collision_check(my_character, item_list)
+                enemy.collision_check(my_character)
                 my_image.paste(enemy.shape, tuple(enemy.position), enemy.shape)
             else:
-                # 이거... 다른 list에 영향을 줌(시각적으로)(귀찮아)
                 dropItem(enemy, item_list)
                 enemy_list.remove(enemy)   
         
-        my_character.special() # which number?
+        my_character.special() # effect end check
         if my_character.effect != 0: # 아이템 효과 있
             my_effect = Image.open(my_character.eshape)
             my_image.paste(my_effect, tuple(my_character.position), my_effect)
-            if my_character.invincible == 1:    # 확인 필요
-                my_img = blinkBody(my_img, my_character.damageDelay, 0.5, 0.5)  # 처리됨?
         
         if my_character.hitted: # 피격시, 투명도 설정
-            my_img = blinkBody(my_img, my_character.damageDelay, 0.3, 0.7)
+            my_img = blinkBody(my_img, my_character.damageDelay)
         my_image.paste(my_img, tuple(my_character.position), my_img)
 
-        s = stage.startStage(enemy_list)
+        s = stage.startStage(enemy_list, my_character.position)
         if s != 0:
-            block_list = stage.showStage()  # d여러번 호출이라.. 따로 처리해? 말어?
+            block_list = stage.showStage()
             #print('show title..')
             if s < 10:
-                my_draw.text((100, 80), 'STAGE ' + str(s), fill="#FFFFFF") # size를 설정해 말아..
+                my_draw.text((100, 80), 'STAGE ' + str(s), fill="#FFFFFF")
             elif s == 10:
                 if stage.stage != 4:
                     my_draw.text((100, 80), 'CLEAR!!!', fill='#FFFFFF')
-                else: # boss clear!!
+                else:   # boss clear!!
                     my_draw.text((90, 80), 'ALL CLEAR!!!', fill='#FFFFFF')
                     my_draw.text((60, 180), "PRESS 'B' For restart...", fill='#000000')
 
@@ -185,9 +167,9 @@ def main():
                         item_list.clear()
                 
         my_draw.text((0, 0), "score "+ str(my_character.score), fill="#FFFFFF")
-        my_draw.text((180, 0), "LIFE : "+str(my_character.life), fill="#FFFFFF") # ani로 하고 싶었어...
+        my_draw.text((180, 0), "LIFE : "+str(my_character.life), fill="#FFFFFF")
 
-        joystick.disp.image(my_image) #, 180, space, space)
+        joystick.disp.image(my_image)
 
 if __name__ == '__main__':
     main()
