@@ -76,7 +76,7 @@ def gameRestart(char, stage, joystick):
 def main():
     space = 0
     joystick = Joystick()
-    stage = Stage(2)    #1 is start, #2, #3 (3 is boss round)
+    stage = Stage(0)    #1 is start, #2, #3 (3 is boss round)
     blockManager = Block(16, 16)
     my_image = Image.new("RGBA", (joystick.width + space, joystick.height + space))
     my_draw = ImageDraw.Draw(my_image)
@@ -92,6 +92,18 @@ def main():
     enemy_list = []
     item_list = [] #[Item(50, 100, 1), Item(120, 180, 2)]
     
+    while stage.stage == 0:
+        my_image.paste(stage.background, (space, space))
+        my_draw.text((5, 220), "joystick : move", fill="#FFFFFF")
+        my_draw.text((5, 230), "A : punch, B : dash", fill="#FFFFFF")
+
+        my_draw.text((60, 170), "PRESS 'A' For start...", fill="#FFFFFF")
+        if not joystick.button_A.value:
+            stage.stage = 1
+            stage.setTime = time()
+
+        joystick.disp.image(my_image)
+
     while True:
         if my_character.life <= 0: # game over..
             #print('life zero')
@@ -152,7 +164,9 @@ def main():
         if s != 0:
             block_list = stage.showStage()
             #print('show title..')
-            if s < 10:
+            if s == -1: # item 클리어(맵 바뀌어서 시작하면)
+                item_list.clear()
+            elif s < 10:
                 my_draw.text((100, 80), 'STAGE ' + str(s), fill="#FFFFFF")
             elif s == 10:
                 if stage.stage != 4:

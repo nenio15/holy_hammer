@@ -11,29 +11,33 @@ class Stage:
         self.clearTime = 0
         self.stage = index
         self.step = -1
+        self.background = Image.open('../res/background/background_0.png')
 
         # 한 번에 50마리는 무리. 30마리가 최대?
         if index == 1:
             self.stage_zombie = [5, 10, 8, 10]
             self.stage_ghost = [1, 2, 0, 4]
-            self.background = Image.open('../res/background/background_1.png')  # 초기 정의 필요
+            #self.background = Image.open('../res/background/background_1.png')  # 초기 정의 필요
         elif index == 2:
             self.stage_zombie = [4, 8, 4, 5]
             self.stage_ghost = [2, 6, 8, 1]
-            self.background = Image.open('../res/background/background_2.png')
+            #self.background = Image.open('../res/background/background_2.png')
         else:
             self.stage_zombie = [4, 8, 6, 6]
             self.stage_ghost = [0, 2, 4, 4]
-            self.background = Image.open('../res/background/background_3.png')
+            #self.background = Image.open('../res/background/background_3.png')
 
     def showStage(self):
-        if self.stage == 1:
+
+        if self.stage == 0:
+            self.background = Image.open('../res/background/background_0.png')
+            block_list = [(0,0)]
+        elif self.stage == 1:
             self.background = Image.open('../res/background/background_1.png')
             block_list = [(60, 30), (30, 60), (60, 60),
                     (150, 30), (180, 60), (150, 60),
                     (30, 150), (60, 180), (60, 150),
                     (180, 150), (150, 180), (150, 150)]
-            
         elif self.stage == 2:
             self.background = Image.open('../res/background/background_2.png')
             block_list = [(30, 30), (60, 30), (90, 30),
@@ -57,6 +61,7 @@ class Stage:
             return self.stage
         elif self.step == -1:     # title 넘기기
             self.step += 1
+            return -1
         elif self.step == 0 and progress > 5 :
             print('call...1')
             self.callEnemy(char_pos, enemy_list, self.stage_zombie[self.step])
@@ -101,7 +106,7 @@ class Stage:
                 
             return 10
 
-        return False
+        return 0
 
     # zom, gho 나오는 수 조정(시간에 따라서)
     def callEnemy(self, char_pos, enemy_list, cnt = 0, name = 'zombie'):
@@ -112,13 +117,13 @@ class Stage:
             # 캐릭터와 겹치지 않게끔 소환
             if -16 < center[0] < 16 and -16 < center[1] < 16:
                 if center[0] > 0:
-                    pos[0] += 30
+                    pos[0] += 45
                 else:
-                    pos[0] -= 30
+                    pos[0] -= 45
                 if center[1] > 0:
-                    pos[1] += 30
+                    pos[1] += 45
                 else:
-                    pos[1] -= 30
+                    pos[1] -= 45
                 
             enemy = Enemy(name, pos)
             enemy_list.extend([enemy])
