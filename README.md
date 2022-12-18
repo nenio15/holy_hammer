@@ -7,8 +7,14 @@ this is working on raspberrypi
 Adafruit 1.3 TFT Bonnet
 
 
-this is developing...
+this is python3
+before start..
+ need PIL, cv2, numpy, hsv_to_rgb
+
+start would be in this folder ( other case would be error )
+'holy_hammer/py_code'
+>> python3 main.py
 
 
-before to start game
 
+Play video : https://youtu.be/Qr0ua1N5rEw
